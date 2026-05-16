@@ -1,4 +1,4 @@
-# ADR-01: [Título corto de la decisión]
+# ADR-01: Arquitectura inicial para Sharply
 
 | Campo  | Valor |
 |--------|-------|
