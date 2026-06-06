@@ -28,7 +28,7 @@ Esa primera decisión arquitectónica determinó las tecnologías y el enfoque g
 
 #### Diagrama
 
-![Vista Lógica — Sharply](./Vistas_arquitectonicas/vista-logica.jpeg)
+![Vista Lógica — Sharply](../Vistas_arquitectonicas/vista-logica.jpeg)
 
 #### Descripción y aspectos clave
 
@@ -131,7 +131,7 @@ La **Vista de Desarrollo** organiza el código fuente de Sharply estructurando e
 
 #### Diagrama
 
-![Vista de Procesos — Sharply](./Vistas_arquitectonicas/vista-procesos.jpeg)
+![Vista de Procesos — Sharply](../Vistas_arquitectonicas/vista-procesos.jpeg)
 
 #### Descripción y aspectos clave
 
@@ -154,7 +154,7 @@ Es un servicio alojado (`BackgroundService`) que se ejecuta de forma paralela e 
 
 #### Diagrama
 
-![Vista de Despliegue — Sharply](./Vistas_arquitectonicas/vista-despliegue.jpeg)
+![Vista de Despliegue — Sharply](../Vistas_arquitectonicas/vista-despliegue.jpeg)
 
 #### Descripción y aspectos clave
 
