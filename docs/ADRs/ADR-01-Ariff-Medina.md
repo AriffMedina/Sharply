@@ -51,4 +51,4 @@ Menciona al menos:
 
 ## Diagrama
 
-![Diagrama del sistema]( ./src/diagrama-nivel-1.jpeg )
+![Diagrama del sistema]( ../Diagramas_C4/boceto.jpeg )
