@@ -67,4 +67,4 @@ Se tiene una intención de en un futuro incorporar **eventos en memoria** median
 ---
 
 ## Diagrama
-![Diagrama_Estilo-Hexagonal](../Diagramas_C4/Hexagonal.png)
+![Diagrama_Estilo-Hexagonal](../Diagramas_C4/Hexagonal.jpeg)
