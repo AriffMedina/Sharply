@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Sharply.Domain.Enums
 {
-    public enum MasteryLevel
+    public enum SkillPriority
     {
-        Rusty = 0,
-        Intermediate = 1,
-        Sharp = 2,
+        Low = 0,
+        Medium = 1,
+        High = 2
     }
-}   
+}

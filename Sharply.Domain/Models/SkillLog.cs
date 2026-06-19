@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sharply.Domain.Models
 {
-    internal class SkillLog
+    public class SkillLog
     {
     }
 }
