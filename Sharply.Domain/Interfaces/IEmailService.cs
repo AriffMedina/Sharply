@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Sharply.Domain.Interfaces
 {
-    internal class IEmailService
+    public interface IEmailService
     {
+        Task SendDecayAlarmAsync(string toEmail, string skillName, int daysInactive);
     }
 }
