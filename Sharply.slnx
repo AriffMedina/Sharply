@@ -1,7 +1,7 @@
 <Solution>
-  <Project Path="../Sharply.Api/Sharply.Api.csproj" Id="887aad1f-6cf4-4bf7-aa1b-84b56c2ad2a9" />
-  <Project Path="../Sharply.Application/Sharply.Application.csproj" Id="30f727b5-1334-46ad-a667-4f65cfd2cf54" />
-  <Project Path="../Sharply.Domain/Sharply.Domain.csproj" Id="970c7b3b-90b6-47d9-9317-385806cdaa92" />
-  <Project Path="../Sharply.Infrastructure/Sharply.Infrastructure.csproj" Id="c7a9fb42-b3e9-4cbc-9bce-71f2ca587b09" />
+  <Project Path="../CitasApp.Application/CitasApp.Application.csproj" />
+  <Project Path="../CitasApp.Infraestructure/CitasApp.Infraestructure.csproj" />
+  <Project Path="Sharply.Api/Sharply.Api.csproj" />
+  <Project Path="Sharply.Domain/Sharply.Domain.csproj" />
   <Project Path="Sharply.Web.csproj" />
 </Solution>
