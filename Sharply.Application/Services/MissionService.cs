@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Sharply.Application.Services
 {
-    internal class MissionService
+    public class MissionService : IMissionService
     {
         private readonly ISkillRepository _skillRepository;
         private readonly ISkillLogRepository _skillLogRepository;

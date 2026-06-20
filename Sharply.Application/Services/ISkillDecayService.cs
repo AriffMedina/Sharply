@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sharply.Application.Services
 {
-    internal interface ISkillDecayService
+    public interface ISkillDecayService
     {
         Task<double> CalculateRetentionAsync(Skill skill);
         Task<IEnumerable<Skill>> GetSkillsAtRiskAsync(int userId, double retentionThreshold = 0.5);

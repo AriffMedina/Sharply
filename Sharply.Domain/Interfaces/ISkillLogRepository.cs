@@ -11,5 +11,5 @@ namespace Sharply.Domain.Interfaces
         Task<SkillLog?> GetByIdAsync(int id);
         Task<IEnumerable<SkillLog>> GetBySkillIdAsync(int skillId);
         Task AddAsync(SkillLog log);
-    }S
+    }
 }
