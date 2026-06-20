@@ -84,9 +84,7 @@ Esto permite ofrecer funcionalidades adicionales sin realizar cambios en el núc
 
 ## Capturas de Swagger
 
-<p align="center">
-  <img src="../Diagrama_C4/Swagger.jpeg" alt="Swagger UI" width="700"/>
-</p>
+![Swagger-UI](../Diagramas_C4/Swagger.jpeg)
 
 ---
 
