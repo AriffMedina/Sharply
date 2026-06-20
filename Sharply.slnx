@@ -1,7 +1,7 @@
 <Solution>
-  <Project Path="../CitasApp.Application/CitasApp.Application.csproj" />
-  <Project Path="../CitasApp.Infraestructure/CitasApp.Infraestructure.csproj" />
   <Project Path="Sharply.Api/Sharply.Api.csproj" />
+  <Project Path="Sharply.Application/Sharply.Application.csproj" />
   <Project Path="Sharply.Domain/Sharply.Domain.csproj" />
+  <Project Path="Sharply.Infrastructure/Sharply.Infrastructure.csproj" />
   <Project Path="Sharply.Web.csproj" />
 </Solution>

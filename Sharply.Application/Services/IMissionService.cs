@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Sharply.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Sharply.Application.Services
 {
-    internal interface IMissionService
+    public interface IMissionService
     {
+        Task<SkillLog> CompleteMissionAsync(int skillId, string? notes);
     }
 }

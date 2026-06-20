@@ -7,7 +7,7 @@ namespace Sharply.Domain.Interfaces
 {
     public interface ISkillRepository
     {
-        Task<IEnumerable<Skill>> GetAllAsync();S
+        Task<IEnumerable<Skill>> GetAllAsync();
         Task<Skill?> GetByIdAsync(int id);
         Task<IEnumerable<Skill>> GetByUserIdAsync(int userId);
         Task AddAsync(Skill skill);
