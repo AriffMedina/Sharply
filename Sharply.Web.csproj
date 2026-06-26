@@ -4,6 +4,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>dd5ac116-47f2-4209-94cb-be511b6fb0ba</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,6 +28,10 @@
 
 	<ItemGroup>
 		<Folder Include="src\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="Sharply.Infrastructure\Sharply.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
