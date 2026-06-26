@@ -1,8 +1,9 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
-using MimeKit;
 using Microsoft.Extensions.Configuration;
+using MimeKit;
 using Sharply.Domain.Interfaces;
+using Sharply.Domain.Models;
 using System.Threading.Tasks;
 
 namespace Sharply.Infrastructure.Messaging
@@ -43,6 +44,16 @@ namespace Sharply.Infrastructure.Messaging
             {
                 await client.DisconnectAsync(true);
             }
+
+        
+        }
+
+        // Patrón Observer
+        public async void Update(Skill skillAtRisk, User user)
+        {
+            var daysInactive = (System.DateTime.UtcNow - skillAtRisk.LastPracticedAt).Days;
+
+            await SendDecayAlarmAsync(user.Email, skillAtRisk.Name, daysInactive);
         }
     }
 }
