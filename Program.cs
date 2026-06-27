@@ -1,7 +1,13 @@
+using Azure.Core;
+using Sharply.Application.Services;
+using Sharply.Domain.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
+builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 
 var app = builder.Build();
 
