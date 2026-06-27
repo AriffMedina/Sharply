@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sharply.Infrastructure.Messaging
 {
-    public class EmailService : IEmailService
+    public class EmailService : IEmailService, ISkillDecayObserver
     {
         private readonly IConfiguration _config;
 
@@ -49,7 +49,7 @@ namespace Sharply.Infrastructure.Messaging
         }
 
         // Patrón Observer
-        public async void Update(Skill skillAtRisk, User user)
+        public async Task UpdateAsync(Skill skillAtRisk, User user)
         {
             var daysInactive = (System.DateTime.UtcNow - skillAtRisk.LastPracticedAt).Days;
 

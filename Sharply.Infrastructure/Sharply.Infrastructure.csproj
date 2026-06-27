@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sharply.Application\Sharply.Application.csproj" />
     <ProjectReference Include="..\Sharply.Domain\Sharply.Domain.csproj" />
   </ItemGroup>
 
