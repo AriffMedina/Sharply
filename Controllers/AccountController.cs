@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sharply.Domain.Interfaces;
+using Sharply.Web.ViewModels;
 
 public class AccountController : Controller
 {
@@ -23,8 +25,6 @@ public class AccountController : Controller
             ModelState.AddModelError("", "Correo o contraseña incorrectos.");
             return View(model);
         }
-
-        // Aquí iniciarías la sesión (Cookies)
         return RedirectToAction("Index", "Home");
     }
 }

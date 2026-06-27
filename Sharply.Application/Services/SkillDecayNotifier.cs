@@ -24,7 +24,7 @@ namespace Sharply.Application.Services
             }
         }
 
-        public async Task Notify(Skill skillAtRisk, User user)
+        public async Task NotifyAsync(Skill skillAtRisk, User user)
         {
             foreach (var observer in _observers)
             {
