@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sharply.Domain\Sharply.Domain.csproj" />
+    <ProjectReference Include="..\Sharply.Infrastructure\Sharply.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
