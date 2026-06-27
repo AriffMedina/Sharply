@@ -9,29 +9,26 @@ namespace Sharply.Application.Services
     public class SkillDecayService : ISkillDecayService
     {
         private readonly ISkillRepository _skillRepository;
+        private readonly IDecayStrategy _decayStrategy;
 
-        // Constante de la curva del olvido de Ebbinghaus (factor de decaimiento)
-        private const double DecayConstant = 1.0;
-
-        public SkillDecayService(ISkillRepository skillRepository)
+        public SkillDecayService(ISkillRepository skillRepository, IDecayStrategy decayStrategy)
         {
             _skillRepository = skillRepository;
+            _decayStrategy = decayStrategy;
         }
 
         public Task<int> GetDaysInactiveAsync(Skill skill)
         {
-            var days = (DateTime.UtcNow - skill.LastPracticedAt).Days;
+            var days = Math.Max(0, (DateTime.UtcNow - skill.LastPracticedAt).Days);
             return Task.FromResult(days);
         }
 
         public async Task<double> CalculateRetentionAsync(Skill skill)
         {
             var daysInactive = await GetDaysInactiveAsync(skill);
-
-            // R = e^(-t/S)  -> formula simplificada de la curva del olvido
-            var retention = Math.Exp(-daysInactive / DecayConstant);
-            return Math.Round(retention, 4);
+            return _decayStrategy.Calculate(skill.InitialRetention, daysInactive, skill.MasteryLevel, skill.Priority);
         }
+        
 
         public async Task<IEnumerable<Skill>> GetSkillsAtRiskAsync(int userId, double retentionThreshold = 0.5)
         {
