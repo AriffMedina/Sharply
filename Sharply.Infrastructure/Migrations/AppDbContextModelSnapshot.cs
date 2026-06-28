@@ -55,7 +55,7 @@ namespace Sharply.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Skills");
+                    b.ToTable("Skills", (string)null);
                 });
 
             modelBuilder.Entity("Sharply.Domain.Models.SkillLog", b =>
@@ -79,7 +79,7 @@ namespace Sharply.Infrastructure.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("SkillLogs");
+                    b.ToTable("SkillLogs", (string)null);
                 });
 
             modelBuilder.Entity("Sharply.Domain.Models.User", b =>
@@ -107,7 +107,7 @@ namespace Sharply.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Sharply.Domain.Models.Skill", b =>

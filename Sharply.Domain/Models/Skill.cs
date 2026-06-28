@@ -13,6 +13,7 @@ namespace Sharply.Domain.Models
         public SkillPriority Priority { get; set; } = SkillPriority.Medium;
         public DateTime LastPracticedAt { get; set; } = DateTime.UtcNow;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public double InitialRetention { get; set; } = 1.0;
 
         public int UserId { get; set; }
         public User User { get; set; } = null!;
