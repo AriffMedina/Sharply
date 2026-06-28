@@ -1,0 +1,62 @@
+﻿@model Sharply.Web.ViewModels.RegisterViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Create Account";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Account – Sharply</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+            Sharply
+        </div>
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">Start tracking your skills today</p>
+
+        <form method="post" asp-controller="Account" asp-action="Register">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="auth-error"></div>
+
+            <div class="auth-field">
+                <label asp-for="Name">Name</label>
+                <input asp-for="Name" type="text" placeholder="Your name" />
+                <span asp-validation-for="Name" class="field-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" type="email" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" placeholder="••••••••" />
+                <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            </div>
+
+            <button class="auth-btn" type="submit">Create Account</button>
+        </form>
+
+        <p class="auth-footer">
+            Already have an account?
+            <a asp-controller="Account" asp-action="Login">Sign in</a>
+        </p>
+    </div>
+</body>
+</html>
