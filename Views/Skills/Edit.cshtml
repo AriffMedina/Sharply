@@ -1,52 +1,198 @@
-﻿@model Sharply.Domain.Models.Skill
+﻿@using Sharply.Web.ViewModels
+@model SkillFormViewModel
 @{
-    Layout = "_DashboardLayout";
+    Layout = "_SkillFormLayout";
     ViewData["Title"] = "Edit Skill";
-    var isSharp = Model.MasteryLevel == Sharply.Domain.Enums.MasteryLevel.Sharp;
-    var isIntermediate = Model.MasteryLevel == Sharply.Domain.Enums.MasteryLevel.Intermediate;
-    var isRusty = Model.MasteryLevel == Sharply.Domain.Enums.MasteryLevel.Rusty;
-    var isHigh = Model.Priority == Sharply.Domain.Enums.SkillPriority.High;
-    var isMedium = Model.Priority == Sharply.Domain.Enums.SkillPriority.Medium;
-    var isLow = Model.Priority == Sharply.Domain.Enums.SkillPriority.Low;
 }
 
 <div class="skill-form-shell">
-    <div class="skill-form-card">
-        <div class="skill-form-header">
-            <h2 class="skill-form-title">Edit skill</h2>
+
+    <div class="skill-form-header">
+        <div>
+            <div class="skill-form-title">
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z" /></svg>
+                Edit Skill
+            </div>
             <p class="skill-form-subtitle">Update this skill's details. The mastery percentage will recalculate its level.</p>
         </div>
+        <div class="skill-form-actions">
+            <a class="btn-ghost" asp-controller="Skills" asp-action="Index">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                Cancel
+            </a>
+            <button class="btn-primary" type="submit" form="skill-form">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><path d="M17 21v-8H7v8M7 3v5h8" /></svg>
+                Save Changes
+            </button>
+        </div>
+    </div>
 
-        <form method="post" asp-controller="Skills" asp-action="Edit" asp-route-id="@Model.Id">
+    <div class="skill-form-grid">
+
+        <form id="skill-form" method="post"
+              asp-controller="Skills" asp-action="Edit"
+              asp-route-id="@ViewBag.SkillId">
             @Html.AntiForgeryToken()
 
-            <div class="skill-form-field">
-                <label>Skill name</label>
-                <input type="text" name="name" value="@Model.Name" required />
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="auth-error-summary">Please check the fields below.</div>
+            }
+
+            <div class="form-section-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /></svg>
+                Skill Identity
             </div>
 
-            <div class="skill-form-field">
-                <label>Mastery level</label>
-                <select name="mastery">
-                    <option value="Sharp" selected="@isSharp">Sharp</option>
-                    <option value="Intermediate" selected="@isIntermediate">Intermediate</option>
-                    <option value="Rusty" selected="@isRusty">Rusty</option>
-                </select>
+            <div class="field-group">
+                <label class="field-label" asp-for="Name">Skill Name</label>
+                <input class="field-input" asp-for="Name" id="skillName" placeholder="e.g. Advanced TypeScript Patterns" autocomplete="off" />
+                <span asp-validation-for="Name" class="field-error"></span>
+                <div class="field-hint">Choose a clear, specific name for better tracking.</div>
             </div>
 
-            <div class="skill-form-field">
-                <label>Priority</label>
-                <select name="priority">
-                    <option value="High" selected="@isHigh">High</option>
-                    <option value="Medium" selected="@isMedium">Medium</option>
-                    <option value="Low" selected="@isLow">Low</option>
-                </select>
+            <div class="field-group">
+                <label class="field-label">Priority Level</label>
+                <div class="priority-options" id="priorityOptions">
+                    <label class="priority-pill" data-priority="low">
+                        <input type="radio" name="Priority" value="Low" @(Model.Priority == "Low" ? "checked" : "") />Low
+                    </label>
+                    <label class="priority-pill" data-priority="medium">
+                        <input type="radio" name="Priority" value="Medium" @(Model.Priority == "Medium" || string.IsNullOrEmpty(Model.Priority) ? "checked" : "") />Medium
+                    </label>
+                    <label class="priority-pill" data-priority="high">
+                        <input type="radio" name="Priority" value="High" @(Model.Priority == "High" ? "checked" : "") />High
+                    </label>
+                </div>
+                <div class="field-hint">This determines its daily practice scheduling weight.</div>
             </div>
 
-            <div class="skill-form-actions">
-                <a class="btn-secondary" asp-controller="Home" asp-action="Index">Cancel</a>
-                <button class="btn-primary" type="submit">Save changes</button>
+            <div class="field-group">
+                <label class="field-label" asp-for="Description">Description</label>
+                <textarea class="field-input" asp-for="Description" id="skillDescription" rows="3"
+                          placeholder="What are you trying to achieve with this skill?"></textarea>
+                <span asp-validation-for="Description" class="field-error"></span>
+                <div class="field-hint">Context helps you remember the "why" during practice.</div>
+            </div>
+
+            <div class="field-group">
+                <div class="mastery-row">
+                    <label class="field-label" style="margin-bottom:0;" asp-for="InitialMasteryPercent">Mastery Level</label>
+                    <span class="mastery-value" id="masteryValueLabel">@Model.InitialMasteryPercent%</span>
+                </div>
+                <input class="mastery-slider" type="range" min="0" max="100"
+                       asp-for="InitialMasteryPercent" id="masterySlider" />
+                <div class="field-hint">Ajusta tu nivel actual de dominio.</div>
             </div>
         </form>
+
+        <div class="preview-pane">
+            <div class="preview-label">
+                LIVE CARD PREVIEW
+                <span class="live-dot">Reflecting inputs</span>
+            </div>
+
+            <div class="preview-card">
+                <div class="preview-top">
+                    <span class="badge medium" id="previewPriorityBadge">Medium Priority</span>
+                </div>
+
+                <div class="preview-ring-wrap">
+                    <div class="ring-wrap">
+                        <svg viewBox="0 0 60 60">
+                            <circle class="ring-track" cx="30" cy="30" r="26" />
+                            <circle class="ring-progress intermediate" id="previewRing" cx="30" cy="30" r="26"
+                                    stroke-dasharray="163.36" stroke-dashoffset="147.02" />
+                        </svg>
+                        <div class="ring-value intermediate" id="previewRingValue">10%</div>
+                    </div>
+                    <div class="preview-ring-sub">MASTERY</div>
+                </div>
+
+                <div class="preview-name" id="previewName">New Skill</div>
+                <div class="preview-sub" id="previewSub">Practicing daily builds retention</div>
+
+                <div class="preview-stat-row">
+                    <div class="preview-stat">
+                        <div class="preview-stat-value">0</div>
+                        <div class="preview-stat-label">DAYS SINCE PRACTICE</div>
+                    </div>
+                    <div class="preview-stat">
+                        <div class="preview-stat-value">Active</div>
+                        <div class="preview-stat-label">CURRENT STATUS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        (function () {
+        var nameInput   = document.getElementById('skillName');
+        var slider      = document.getElementById('masterySlider');
+        var masteryLabel= document.getElementById('masteryValueLabel');
+        var previewName = document.getElementById('previewName');
+        var previewRing = document.getElementById('previewRing');
+        var previewRingValue = document.getElementById('previewRingValue');
+        var previewBadge = document.getElementById('previewPriorityBadge');
+        var priorityPills = document.querySelectorAll('.priority-pill');
+        var circumference = 2 * Math.PI * 26;
+
+        function masteryClass(percent) {
+        if (percent < 40) return 'rusty';
+        if (percent < 75) return 'intermediate';
+        return 'sharp';
+        }
+
+        function updateRing() {
+        var percent = parseInt(slider.value, 10) || 0;
+        var offset  = circumference * (1 - percent / 100);
+        var cls     = masteryClass(percent);
+
+        masteryLabel.textContent = percent + '%';
+        previewRingValue.textContent = percent + '%';
+        previewRing.setAttribute('stroke-dasharray', circumference.toFixed(2));
+        previewRing.setAttribute('stroke-dashoffset', offset.toFixed(2));
+
+        previewRing.classList.remove('rusty','intermediate','sharp');
+        previewRing.classList.add(cls);
+        previewRingValue.classList.remove('rusty','intermediate','sharp');
+        previewRingValue.classList.add(cls);
+        }
+
+        function updateName() {
+        previewName.textContent = nameInput.value.trim() || 'New Skill';
+        }
+
+        function updatePriority(priority) {
+        priorityPills.forEach(function(pill) {
+        pill.classList.toggle('selected', pill.dataset.priority === priority);
+        });
+        previewBadge.textContent = priority.charAt(0).toUpperCase() + priority.slice(1) + ' Priority';
+        previewBadge.classList.remove('low','medium','high');
+        previewBadge.classList.add(priority);
+        }
+
+        priorityPills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+        pill.querySelector('input').checked = true;
+        updatePriority(pill.dataset.priority);
+        });
+        });
+
+        slider.addEventListener('input', updateRing);
+        nameInput.addEventListener('input', updateName);
+
+        var checkedPill = document.querySelector('.priority-pill input:checked');
+        var initialPriority = checkedPill ? checkedPill.value.toLowerCase() : 'medium';
+        updatePriority(initialPriority);
+        updateRing();
+        updateName();
+        })();
+    </script>
+}

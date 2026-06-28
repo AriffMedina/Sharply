@@ -14,115 +14,164 @@ namespace Sharply.Controllers
     {
         private readonly ISkillRepository _skillRepository;
         private readonly ISkillLogRepository _skillLogRepository;
-        private readonly ISkillDecayService _decayService;
+        private readonly ISkillDecayService _skillDecayService;
 
-        public SkillsController(ISkillRepository skillRepository, ISkillLogRepository skillLogRepository, ISkillDecayService decayService)
+        public SkillsController(
+            ISkillRepository skillRepository,
+            ISkillLogRepository skillLogRepository,
+            ISkillDecayService skillDecayService)
         {
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
-            _decayService = decayService;
+            _skillDecayService = skillDecayService;
         }
 
-        private int GetUserId() =>
-            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
+        // ── LIST ──────────────────────────────────────────────
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var skills = await _skillRepository.GetByUserIdAsync(GetUserId());
-            var viewModels = new List<SkillViewModel>();
-
+            var skills = await _skillRepository.GetByUserIdAsync(CurrentUserId);
+            var cards = new List<SkillCardViewModel>();
             foreach (var skill in skills)
-            {
-                var retention = await _decayService.CalculateRetentionAsync(skill);
-                var days = await _decayService.GetDaysInactiveAsync(skill);
-                viewModels.Add(new SkillViewModel
-                {
-                    Id = skill.Id,
-                    Name = skill.Name,
-                    MasteryLevel = skill.MasteryLevel.ToString(),
-                    Priority = skill.Priority.ToString(),
-                    RetentionPercent = retention * 100,
-                    DaysInactive = days,
-                    LastPracticedAt = skill.LastPracticedAt,
-                    CreatedAt = skill.CreatedAt
-                });
-            }
-
-            return View(viewModels);
+                cards.Add(await MapSkillToCardAsync(skill));
+            return View(cards);
         }
 
+        // ── CREATE ────────────────────────────────────────────
         [HttpGet]
-        public IActionResult Create() => View();
+        public IActionResult Create() => View(new SkillFormViewModel());
 
-        [HttpPost]
-        public async Task<IActionResult> Create(string name, string mastery, string priority)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(SkillFormViewModel model)
         {
+            if (!ModelState.IsValid) return View(model);
+
             var skill = new Skill
             {
-                Name = name,
-                MasteryLevel = Enum.Parse<MasteryLevel>(mastery),
-                Priority = Enum.Parse<SkillPriority>(priority),
-                InitialRetention = 1.0,
+                Name = model.Name.Trim(),
+                Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium,
+                MasteryLevel = MapMastery(model.InitialMasteryPercent),
+                InitialRetention = model.InitialMasteryPercent / 100.0,
                 LastPracticedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
-                UserId = GetUserId()
+                UserId = CurrentUserId
             };
-
             await _skillRepository.AddAsync(skill);
+
+            if (!string.IsNullOrWhiteSpace(model.Description))
+                await _skillLogRepository.AddAsync(new SkillLog
+                {
+                    SkillId = skill.Id,
+                    Notes = model.Description!.Trim(),
+                    PracticedAt = DateTime.UtcNow
+                });
+
+            TempData["SkillAdded"] = skill.Name;
             return RedirectToAction("Index", "Home");
         }
 
+        // ── EDIT ──────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var skill = await _skillRepository.GetByIdAsync(id);
-            if (skill == null || skill.UserId != GetUserId()) return NotFound();
-            return View(skill);
+            if (skill is null || skill.UserId != CurrentUserId) return NotFound();
+
+            var vm = new SkillFormViewModel
+            {
+                Name = skill.Name,
+                Priority = skill.Priority.ToString(),
+                InitialMasteryPercent = (int)Math.Round(skill.InitialRetention * 100)
+            };
+            ViewBag.SkillId = id;
+            return View(vm);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(int id, string name, string mastery, string priority)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, SkillFormViewModel model)
         {
+            if (!ModelState.IsValid) { ViewBag.SkillId = id; return View(model); }
+
             var skill = await _skillRepository.GetByIdAsync(id);
-            if (skill == null || skill.UserId != GetUserId()) return NotFound();
+            if (skill is null || skill.UserId != CurrentUserId) return NotFound();
 
-            skill.Name = name;
-            skill.MasteryLevel = Enum.Parse<MasteryLevel>(mastery);
-            skill.Priority = Enum.Parse<SkillPriority>(priority);
-
+            skill.Name = model.Name.Trim();
+            skill.Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium;
+            skill.MasteryLevel = MapMastery(model.InitialMasteryPercent);
+            skill.InitialRetention = model.InitialMasteryPercent / 100.0;
             await _skillRepository.UpdateAsync(skill);
-            return RedirectToAction("Index", "Home");
+
+            TempData["SkillUpdated"] = skill.Name;
+            return RedirectToAction("Index");
         }
 
-        [HttpPost]
+        // ── DELETE ────────────────────────────────────────────
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var skill = await _skillRepository.GetByIdAsync(id);
-            if (skill == null || skill.UserId != GetUserId()) return NotFound();
+            if (skill is null || skill.UserId != CurrentUserId) return NotFound();
 
             await _skillRepository.DeleteAsync(id);
-            return RedirectToAction("Index", "Home");
+            TempData["SkillDeleted"] = skill.Name;
+            return RedirectToAction("Index");
         }
 
-        [HttpPost]
+        // ── LOG PRACTICE ──────────────────────────────────────
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> LogPractice(int id)
         {
             var skill = await _skillRepository.GetByIdAsync(id);
-            if (skill == null || skill.UserId != GetUserId()) return NotFound();
+            if (skill is null || skill.UserId != CurrentUserId) return NotFound();
 
             skill.LastPracticedAt = DateTime.UtcNow;
             skill.InitialRetention = 1.0;
+
+            if (skill.MasteryLevel < MasteryLevel.Sharp)
+                skill.MasteryLevel++;
+
             await _skillRepository.UpdateAsync(skill);
 
-            var log = new SkillLog
+            await _skillLogRepository.AddAsync(new SkillLog
             {
                 SkillId = skill.Id,
-                PracticedAt = DateTime.UtcNow,
-                Notes = "Practice session logged."
-            };
-            await _skillLogRepository.AddAsync(log);
+                Notes = "Practice session logged.",
+                PracticedAt = DateTime.UtcNow
+            });
 
             return RedirectToAction("Index", "Home");
+        }
+
+        // ── HELPERS ───────────────────────────────────────────
+        private int CurrentUserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+
+        private static MasteryLevel MapMastery(int percent) => percent switch
+        {
+            < 40 => MasteryLevel.Rusty,
+            < 75 => MasteryLevel.Intermediate,
+            _ => MasteryLevel.Sharp
+        };
+
+        private async Task<SkillCardViewModel> MapSkillToCardAsync(Skill skill)
+        {
+            var daysAgo = await _skillDecayService.GetDaysInactiveAsync(skill);
+            var retention = await _skillDecayService.CalculateRetentionAsync(skill);
+            var logs = await _skillLogRepository.GetBySkillIdAsync(skill.Id);
+            var latestNote = logs.OrderByDescending(l => l.PracticedAt).FirstOrDefault()?.Notes;
+
+            return new SkillCardViewModel
+            {
+                Id = skill.Id,
+                Name = skill.Name,
+                Priority = skill.Priority.ToString(),
+                MasteryLevel = skill.MasteryLevel.ToString(),
+                RetentionPercent = (int)Math.Round(retention * 100),
+                DaysAgo = daysAgo,
+                Note = string.IsNullOrWhiteSpace(latestNote)
+                    ? "No practice notes yet."
+                    : latestNote!
+            };
         }
     }
 }

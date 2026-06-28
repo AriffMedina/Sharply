@@ -1,0 +1,116 @@
+﻿.skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.skill-list-row {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1rem 1.25rem;
+}
+
+.skill-list-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.skill-list-meta {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-top: .35rem;
+    flex-wrap: wrap;
+    font-size: .78rem;
+    color: var(--text-tertiary);
+}
+
+    .skill-list-meta .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+.skill-list-actions {
+    display: flex;
+    gap: .5rem;
+    flex-shrink: 0;
+}
+
+.btn-sl {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .45rem .9rem;
+    border-radius: 8px;
+    font-size: .8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .15s;
+    text-decoration: none;
+}
+
+.btn-sl--edit {
+    background: rgba(255,255,255,.06);
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,.1);
+}
+
+    .btn-sl--edit:hover {
+        background: rgba(255,255,255,.11);
+    }
+
+.btn-sl--del {
+    background: rgba(241,99,95,.12);
+    color: #fca5a5;
+    border-color: rgba(241,99,95,.28);
+}
+
+    .btn-sl--del:hover {
+        background: rgba(241,99,95,.22);
+    }
+
+.skill-toast {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .75rem 1rem;
+    border-radius: 10px;
+    font-size: .84rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.skill-toast--ok {
+    background: rgba(52,211,153,.1);
+    border: 1px solid rgba(52,211,153,.25);
+    color: #34d399;
+}
+
+.skill-toast--err {
+    background: rgba(241,99,95,.1);
+    border: 1px solid rgba(241,99,95,.25);
+    color: #fca5a5;
+}
+
+.skills-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 2rem;
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+    .skills-empty svg {
+        opacity: .3;
+    }
+
+    .skills-empty p {
+        margin: 0;
+        font-size: .95rem;
+    }
