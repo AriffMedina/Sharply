@@ -1,0 +1,50 @@
+﻿@model List<Sharply.Web.ViewModels.SkillViewModel>
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "My Skills";
+}
+
+<div class="skills-shell">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">All Skills</h2>
+        </div>
+        <a class="btn-primary" asp-controller="Skills" asp-action="Create">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg>
+            Add Skill
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <p>You have no skills logged yet.</p>
+            <a class="btn-primary" asp-controller="Skills" asp-action="Create">Add my first skill</a>
+        </div>
+    }
+    else
+    {
+        <div class="skills-grid">
+            @foreach (var skill in Model)
+            {
+                <div class="card skill-card">
+                    <div class="skill-top">
+                        <div>
+                            <div class="skill-name">@skill.Name</div>
+                            <span class="badge @skill.Priority.ToLower()">@skill.Priority Priority</span>
+                        </div>
+                    </div>
+                    <div class="skill-retention">@Math.Round(skill.RetentionPercent, 1)% retention</div>
+                    <div class="skill-days">@skill.DaysInactive days inactive</div>
+                    <div class="skill-actions">
+                        <a asp-controller="Skills" asp-action="Edit" asp-route-id="@skill.Id" class="btn-secondary">Edit</a>
+                        <form method="post" asp-controller="Skills" asp-action="Delete" asp-route-id="@skill.Id" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

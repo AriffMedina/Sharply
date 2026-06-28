@@ -1,0 +1,52 @@
+﻿@model Sharply.Domain.Models.Skill
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Edit Skill";
+    var isSharp = Model.MasteryLevel == Sharply.Domain.Enums.MasteryLevel.Sharp;
+    var isIntermediate = Model.MasteryLevel == Sharply.Domain.Enums.MasteryLevel.Intermediate;
+    var isRusty = Model.MasteryLevel == Sharply.Domain.Enums.MasteryLevel.Rusty;
+    var isHigh = Model.Priority == Sharply.Domain.Enums.SkillPriority.High;
+    var isMedium = Model.Priority == Sharply.Domain.Enums.SkillPriority.Medium;
+    var isLow = Model.Priority == Sharply.Domain.Enums.SkillPriority.Low;
+}
+
+<div class="skill-form-shell">
+    <div class="skill-form-card">
+        <div class="skill-form-header">
+            <h2 class="skill-form-title">Edit skill</h2>
+            <p class="skill-form-subtitle">Update this skill's details. The mastery percentage will recalculate its level.</p>
+        </div>
+
+        <form method="post" asp-controller="Skills" asp-action="Edit" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+
+            <div class="skill-form-field">
+                <label>Skill name</label>
+                <input type="text" name="name" value="@Model.Name" required />
+            </div>
+
+            <div class="skill-form-field">
+                <label>Mastery level</label>
+                <select name="mastery">
+                    <option value="Sharp" selected="@isSharp">Sharp</option>
+                    <option value="Intermediate" selected="@isIntermediate">Intermediate</option>
+                    <option value="Rusty" selected="@isRusty">Rusty</option>
+                </select>
+            </div>
+
+            <div class="skill-form-field">
+                <label>Priority</label>
+                <select name="priority">
+                    <option value="High" selected="@isHigh">High</option>
+                    <option value="Medium" selected="@isMedium">Medium</option>
+                    <option value="Low" selected="@isLow">Low</option>
+                </select>
+            </div>
+
+            <div class="skill-form-actions">
+                <a class="btn-secondary" asp-controller="Home" asp-action="Index">Cancel</a>
+                <button class="btn-primary" type="submit">Save changes</button>
+            </div>
+        </form>
+    </div>
+</div>

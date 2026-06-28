@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Add Skill";
+}
+
+<div class="skill-form-shell">
+    <div class="skill-form-card">
+        <div class="skill-form-header">
+            <h2 class="skill-form-title">Add a new skill</h2>
+            <p class="skill-form-subtitle">Track a skill and Sharply will monitor its retention over time.</p>
+        </div>
+
+        <form method="post" asp-controller="Skills" asp-action="Create">
+            @Html.AntiForgeryToken()
+
+            <div class="skill-form-field">
+                <label>Skill name</label>
+                <input type="text" name="name" placeholder="e.g. React, SQL, Docker..." required />
+            </div>
+
+            <div class="skill-form-field">
+                <label>Mastery level</label>
+                <select name="mastery">
+                    <option value="Sharp">Sharp</option>
+                    <option value="Intermediate" selected>Intermediate</option>
+                    <option value="Rusty">Rusty</option>
+                </select>
+            </div>
+
+            <div class="skill-form-field">
+                <label>Priority</label>
+                <select name="priority">
+                    <option value="High">High</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+
+            <div class="skill-form-actions">
+                <a class="btn-secondary" asp-controller="Home" asp-action="Index">Cancel</a>
+                <button class="btn-primary" type="submit">Add Skill</button>
+            </div>
+        </form>
+    </div>
+</div>
