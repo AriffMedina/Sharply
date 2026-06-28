@@ -1,8 +1,333 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Linq
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@functions {
+    string MasteryClass(string mastery) => mastery.Trim().ToLowerInvariant() switch
+    {
+        "sharp" => "sharp",
+        "rusty" => "rusty",
+        _ => "intermediate"
+    };
+
+    string PriorityClass(string priority) => priority.Trim().ToLowerInvariant() switch
+    {
+        "high" => "high",
+        "low" => "low",
+        _ => "medium"
+    };
+
+    string Initials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2 ? $"{parts[0][0]}{parts[1][0]}" : name.Substring(0, Math.Min(2, name.Length));
+    }
+
+    int HighPriorityCount()
+    {
+        int count = 0;
+        foreach (var s in Model.Skills)
+            if (s.Priority == "High") count++;
+        return count;
+    }
+}
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+            Sharply
+        </div>
+
+        <ul class="sidebar-nav">
+            <li>
+                <a href="#" class="active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Skills" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                    Skills
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z" /><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3" /></svg>
+                    Challenges
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
+                    Community
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+                    Settings
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-bottom">
+            <div>
+                <div class="sidebar-panel-title">MOST CONSISTENT</div>
+                @foreach (var p in Model.MostConsistent)
+                {
+                    <div class="leaderboard-row">
+                        <div class="leaderboard-avatar">@Initials(p.Name)</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">@p.Name</div>
+                            <div class="leaderboard-sub">Current Streak</div>
+                        </div>
+                        <div class="leaderboard-value">@p.Value</div>
+                    </div>
+                }
+            </div>
+            <div>
+                <div class="sidebar-panel-title">TOP CONTRIBUTORS</div>
+                @foreach (var c in Model.TopContributors)
+                {
+                    <div class="leaderboard-row">
+                        <div class="leaderboard-avatar">@Initials(c.Name)</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">@c.Name</div>
+                            <div class="leaderboard-sub">Guide Points</div>
+                        </div>
+                        <div class="leaderboard-value">@c.Value</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.35-4.35" /></svg>
+                <span>Search your skills...</span>
+            </div>
+            <div class="streak-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-4 5-4 9a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 15.5C5 9 12 7 12 2z" /></svg>
+                @Model.StreakDays DAY STREAK
+            </div>
+            <div class="user-chip" id="userChip" onclick="toggleLogoutMenu()" style="cursor:pointer; position:relative;">
+                <div class="name-block">
+                    <div class="name">@Model.UserName</div>
+                    <div class="role">@Model.UserRole</div>
+                </div>
+                <div class="user-avatar">@Initials(Model.UserName)<span class="dot"></span></div>
+                <div class="logout-dropdown" id="logoutDropdown">
+                    <form method="post" asp-controller="Account" asp-action="Logout">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="logout-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                            Sign out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="card stat-card">
+                <div class="stat-head">
+                    <span class="stat-label">AVG RETENTION</span>
+                    <span class="stat-icon-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17l6-6 4 4 8-8" /><path d="M17 7h4v4" /></svg>
+                    </span>
+                </div>
+                <div class="stat-value">@Model.AvgRetention.ToString("0.0")%</div>
+                <div class="stat-delta"><span class="up">+@Model.RetentionDeltaVsLastWeek.ToString("0.0")%</span> vs last week</div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="stat-head">
+                    <span class="stat-label">WEEKLY ACTIVITY</span>
+                </div>
+                <div class="chart-wrap">
+                    <svg viewBox="0 0 220 70" width="100%" height="64" preserveAspectRatio="none">
+                        <polyline points="0,45 30,50 60,30 90,38 120,18 150,22 190,10 220,14" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div class="chart-axis"><span>MON</span><span>SUN</span></div>
+                </div>
+            </div>
+
+            <div class="card promo-card">
+                <div class="promo-eyebrow">GROWTH TRACKING</div>
+                <div class="promo-title">Historical Insights</div>
+                <div class="promo-text">Analyze your learning patterns over the last 90 days.</div>
+                <button class="promo-btn" type="button">
+                    View History
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6" /></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div>
+                <div class="section-title-row">
+                    <span class="section-title">Your Skill Forge</span>
+                    <span class="section-badge">@Model.Skills.Count Total</span>
+                </div>
+                <div class="section-subtitle">Reviewing @HighPriorityCount() High Priority skills today.</div>
+            </div>
+            <div class="section-actions">
+                <a class="btn-primary" asp-controller="Skills" asp-action="Create">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg>
+                    Add Skill
+                </a>
+            </div>
+        </div>
+
+        <div class="skills-grid">
+            @foreach (var skill in Model.Skills)
+            {
+                var masteryClass = MasteryClass(skill.MasteryLevel);
+                var priorityClass = PriorityClass(skill.Priority);
+                var circumference = 2 * Math.PI * 26;
+                var offset = circumference * (1 - skill.RetentionPercent / 100.0);
+
+                <div class="card skill-card">
+                    <div class="skill-top">
+                        <div>
+                            <div class="skill-name">@skill.Name</div>
+                            <span class="badge @priorityClass">@skill.Priority Priority</span>
+                        </div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 60 60">
+                                <circle class="ring-track" cx="30" cy="30" r="26" />
+                                <circle class="ring-progress @masteryClass" cx="30" cy="30" r="26"
+                                        stroke-dasharray="@circumference.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                        stroke-dashoffset="@offset.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                            </svg>
+                            <div class="ring-value @masteryClass">@skill.RetentionPercent%</div>
+                        </div>
+                    </div>
+
+                    <div class="skill-meta">
+                        <span class="meta-item">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                            @skill.DaysAgo days ago
+                        </span>
+                        <span class="meta-item mastery-label @masteryClass">
+                            @(masteryClass == "rusty" ? "↘" : "↗") @skill.MasteryLevel
+                        </span>
+                    </div>
+
+                    <p class="skill-note">@skill.Note</p>
+
+                    @if (skill.Id > 0)
+                    {
+                        <form method="post" asp-controller="Skills" asp-action="LogPractice" asp-route-id="@skill.Id">
+                            @Html.AntiForgeryToken()
+                            <button class="btn-primary full btn-practiced" type="submit">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5" /></svg>
+                                Practiced
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button class="btn-primary full" type="button" disabled style="opacity:.4;cursor:default;">
+                            Log Practice
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="card tip-banner">
+            <div class="tip-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+            </div>
+            <div class="tip-body">
+                <div class="tip-title">Sharply Tip: Spaced Repetition</div>
+                <div class="tip-text">Focusing on your <span class="highlight">Rusty</span> skills for just 10 minutes a day can improve long-term retention by up to 40%. Consistency beats intensity.</div>
+            </div>
+            <button class="tip-btn" type="button" onclick="window.location.href='@Url.Action("About", "Home")'">Learn More</button>
+        </div>
+
+        <div class="card email-card">
+            <div class="email-copy">
+                <div class="email-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 6-10 7L2 6" /></svg>
+                    Test email notifications (MailKit)
+                </div>
+                <div class="email-text">Sends the same "skill at risk" alert triggered by the DecayWorker, to confirm that SMTP sending with MailKit works end-to-end.</div>
+            </div>
+
+            <form class="email-form" method="post" asp-controller="Home" asp-action="SendTestEmail">
+                @Html.AntiForgeryToken()
+                <input type="email" name="testEmail" placeholder="you@example.com" required value="@Model.LastTestEmail" />
+                <button class="btn-primary" type="submit">Send test email</button>
+
+                @if (!string.IsNullOrEmpty(Model.EmailStatusMessage))
+                {
+                    <div class="email-status @(Model.EmailSendSuccess ? "ok" : "error")">@Model.EmailStatusMessage</div>
+                }
+            </form>
+        </div>
+
+    </main>
 </div>
+
+@section Scripts {
+    <style>
+        .logout-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            z-index: 999;
+            min-width: 140px;
+            overflow: hidden;
+        }
+
+            .logout-dropdown.open {
+                display: block;
+            }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--card);
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+
+            .logout-btn:hover {
+                background: var(--hover);
+            }
+    </style>
+    <script>
+        function toggleLogoutMenu() {
+            document.getElementById('logoutDropdown').classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            var chip = document.getElementById('userChip');
+            if (chip && !chip.contains(e.target)) {
+                document.getElementById('logoutDropdown').classList.remove('open');
+            }
+        });
+    </script>
+}

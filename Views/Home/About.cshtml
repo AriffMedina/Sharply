@@ -1,0 +1,126 @@
+﻿@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "About Sharply";
+}
+<head><link href="~/css/about.css" rel="stylesheet" /></head>
+<div class="about-shell">
+
+    <div class="about-hero">
+        <div class="about-hero-inner">
+            <div class="about-logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                Sharply
+            </div>
+            <h1 class="about-title">Stay sharp. Never forget what you've learned.</h1>
+            <p class="about-subtitle">Sharply tracks the skills you already have — and makes sure you keep them.</p>
+        </div>
+    </div>
+
+    <div class="about-content">
+
+        <section class="about-section">
+            <div class="about-section-label">THE PROBLEM</div>
+            <h2 class="about-section-title">You learn a lot. But forgetting is silent.</h2>
+            <p class="about-section-text">
+                Developers and professionals today juggle dozens of technologies. You pick up React, then spend a month deep in databases, and when you come back to that React project three weeks later — something is gone.
+                Not all of it, but enough to slow you down. Enough to feel rusty.
+            </p>
+            <p class="about-section-text">
+                The problem isn't that you didn't learn it well enough. It's that no one reminded you to revisit it. Skills decay silently, and most tools only help you learn new things — not protect what you've already built.
+            </p>
+        </section>
+
+        <section class="about-section">
+            <div class="about-section-label">THE SCIENCE</div>
+            <h2 class="about-section-title">Built on the Ebbinghaus Forgetting Curve</h2>
+            <p class="about-section-text">
+                In 1885, psychologist Hermann Ebbinghaus discovered that memory decays in a predictable pattern after learning. Without reinforcement, you forget roughly 50% of new information within a day, and up to 90% within a week.
+            </p>
+            <p class="about-section-text">
+                Sharply uses this model — adapted for technical skills — to calculate a <strong>retention score</strong> for each skill you track. The longer you go without practicing, the lower your retention. Log a practice session and the curve resets. The goal is simple: keep your skills in the green.
+            </p>
+            <div class="about-highlights">
+                <div class="about-highlight">
+                    <div class="highlight-icon sharp">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                    </div>
+                    <div>
+                        <div class="highlight-label">Sharp</div>
+                        <div class="highlight-desc">Retention above 80% — practiced recently and solid.</div>
+                    </div>
+                </div>
+                <div class="about-highlight">
+                    <div class="highlight-icon intermediate">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8" /></svg>
+                    </div>
+                    <div>
+                        <div class="highlight-label">Intermediate</div>
+                        <div class="highlight-desc">Retention between 50–80% — could use a refresher soon.</div>
+                    </div>
+                </div>
+                <div class="about-highlight">
+                    <div class="highlight-icon rusty">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01" /><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /></svg>
+                    </div>
+                    <div>
+                        <div class="highlight-label">Rusty</div>
+                        <div class="highlight-desc">Retention below 50% — needs attention before it fades further.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <div class="about-section-label">HOW IT HELPS</div>
+            <h2 class="about-section-title">A dashboard that looks out for you</h2>
+            <div class="about-features">
+                <div class="about-feature">
+                    <div class="feature-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                    </div>
+                    <div>
+                        <div class="feature-title">Decay Tracking</div>
+                        <div class="feature-desc">Every skill you add is monitored in real time. Sharply calculates how many days have passed since your last practice and adjusts your retention score automatically.</div>
+                    </div>
+                </div>
+                <div class="about-feature">
+                    <div class="feature-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 6-10 7L2 6" /></svg>
+                    </div>
+                    <div>
+                        <div class="feature-title">Proactive Alerts</div>
+                        <div class="feature-desc">You shouldn't have to log in to know you're forgetting something. Sharply sends you email alerts when a skill is at risk — before the knowledge is gone.</div>
+                    </div>
+                </div>
+                <div class="about-feature">
+                    <div class="feature-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z" /></svg>
+                    </div>
+                    <div>
+                        <div class="feature-title">Streaks &amp; Consistency</div>
+                        <div class="feature-desc">Sharply rewards consistency over intensity. A 10-minute review logged regularly beats a 3-hour cram session once a month. Your streak keeps you accountable.</div>
+                    </div>
+                </div>
+                <div class="about-feature">
+                    <div class="feature-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                    </div>
+                    <div>
+                        <div class="feature-title">Priority &amp; Focus</div>
+                        <div class="feature-desc">Set your skills as High, Medium, or Low priority. Sharply surfaces the most critical ones first so you always know where to focus your limited time.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section about-cta-section">
+            <h2 class="about-section-title">Your knowledge is an asset. Protect it.</h2>
+            <p class="about-section-text">Sharply is built for learners who take their craft seriously — developers, designers, and anyone who builds expertise over time and can't afford to let it slip.</p>
+            <a class="btn-primary about-cta-btn" asp-controller="Skills" asp-action="Create">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg>
+                Add Your First Skill
+            </a>
+        </section>
+
+    </div>
+</div>
