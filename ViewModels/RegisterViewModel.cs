@@ -13,6 +13,7 @@ namespace Sharply.Web.ViewModels
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
+        [MinLength(6, ErrorMessage = "The password must have at least 6 characters")]
         public string Password { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please confirm your password")]

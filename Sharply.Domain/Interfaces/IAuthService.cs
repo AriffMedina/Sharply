@@ -7,5 +7,6 @@ namespace Sharply.Domain.Interfaces
     {
         Task<User?> AuthenticateAsync(string email, string password);
         Task<bool> RegisterAsync(User user, string password);
+        Task<bool> EmailExistsAsync(string email);
     }
 }

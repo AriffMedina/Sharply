@@ -1,8 +1,9 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using Sharply.Application.Services;
 using Sharply.Domain.Interfaces;
 using Sharply.Infrastructure.Data;
+using Sharply.Infrastructure.Messaging;
 using Sharply.Infrastructure.Repositories;
 using Sharply.Infrastructure.Services;
 
@@ -13,22 +14,22 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// Auth
+// Autenticación basada en cookies para Login/Registro.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.AccessDeniedPath = "/Account/Login";
+        options.ExpireTimeSpan = TimeSpan.FromDays(14);
+        options.SlidingExpiration = true;
     });
 
-// Repositories
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
-
-// Services
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 

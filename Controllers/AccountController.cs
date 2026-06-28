@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sharply.Domain.Interfaces;
+using Sharply.Domain.Models;
 using Sharply.Web.ViewModels;
 using System.Security.Claims;
 
@@ -15,10 +17,20 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login() => View();
+    [AllowAnonymous]
+    public IActionResult Login(string? returnUrl = null)
+    {
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Home");
+
+        ViewData["ReturnUrl"] = returnUrl;
+        return View();
+    }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid) return View(model);
 
@@ -29,45 +41,73 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.Email, user.Email)
-        };
+        await SignInUserAsync(user);
 
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
 
         return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
-    public IActionResult Register() => View();
+    [AllowAnonymous]
+    public IActionResult Register()
+    {
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Home");
+
+        return View();
+    }
 
     [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
 
-        var existing = await _authService.AuthenticateAsync(model.Email, model.Password);
-        if (existing != null)
+        if (await _authService.EmailExistsAsync(model.Email))
         {
             ModelState.AddModelError(nameof(model.Email), "An account with this email already exists.");
             return View(model);
         }
 
-        var newUser = new Sharply.Domain.Models.User { Name = model.Name, Email = model.Email };
-        await _authService.RegisterAsync(newUser, model.Password);
-        return RedirectToAction("Login");
+        var user = new User
+        {
+            Name = model.Name,
+            Email = model.Email
+        };
+
+        await _authService.RegisterAsync(user, model.Password);
+        await SignInUserAsync(user);
+
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
+    }
+
+    private async Task SignInUserAsync(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Name),
+            new(ClaimTypes.Email, user.Email)
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal,
+            new AuthenticationProperties { IsPersistent = true });
     }
 }
