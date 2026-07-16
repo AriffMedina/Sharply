@@ -28,11 +28,13 @@
 
 	<ItemGroup>
 		<Folder Include="src\" />
+		<Folder Include="src\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="Sharply.Domain\Sharply.Domain.csproj" />
-	  <ProjectReference Include="Sharply.Infrastructure\Sharply.Infrastructure.csproj" />
+	  <ProjectReference Include="..\Sharply.Application\Sharply.Application.csproj" />
+	  <ProjectReference Include="..\Sharply.Domain\Sharply.Domain.csproj" />
+	  <ProjectReference Include="..\Sharply.Infrastructure\Sharply.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
