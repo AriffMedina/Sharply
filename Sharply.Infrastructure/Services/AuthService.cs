@@ -1,23 +1,21 @@
 ﻿using BCrypt.Net;
-using Microsoft.EntityFrameworkCore;
 using Sharply.Domain.Interfaces;
 using Sharply.Domain.Models;
-using Sharply.Infrastructure.Data;
 
 namespace Sharply.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly AppDbContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public AuthService(AppDbContext context)
+        public AuthService(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
         public async Task<User?> AuthenticateAsync(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _userRepository.GetByEmailAsync(email);
 
             if (user == null) return null;
 
@@ -32,15 +30,14 @@ namespace Sharply.Infrastructure.Services
         {
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _userRepository.AddAsync(user);
 
             return true;
         }
 
         public async Task<bool> EmailExistsAsync(string email)
         {
-            return await _context.Users.AnyAsync(u => u.Email == email);
+            return await _userRepository.EmailExistsAsync(email);
         }
     }
 }
