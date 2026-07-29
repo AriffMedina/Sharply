@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Sharply.Application.Services;
 using Sharply.Domain.Interfaces;
 using Sharply.Infrastructure.Data;
+using Sharply.Infrastructure.Jobs;
 using Sharply.Infrastructure.Messaging;
 using Sharply.Infrastructure.Repositories;
 using Sharply.Infrastructure.Services;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
+builder.Services.AddHostedService<DecayWorker>();
 
 var app = builder.Build();
 

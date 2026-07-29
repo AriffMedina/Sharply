@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Sharply.Application.Services;
 using Sharply.Domain.Interfaces;
 using Sharply.Infrastructure.Data;
-using Sharply.Infrastructure.Messaging;
 
 namespace Sharply.Infrastructure.Jobs
 {
@@ -29,7 +28,15 @@ namespace Sharply.Infrastructure.Jobs
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                await RunDecayCheckAsync();
+                try
+                {
+                    await RunDecayCheckAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Fallo en ciclo de DecayWorker");
+                }
+
                 await Task.Delay(_interval, stoppingToken);
             }
         }
@@ -40,11 +47,11 @@ namespace Sharply.Infrastructure.Jobs
             using var scope = _serviceProvider.CreateScope();
 
             var decayService = scope.ServiceProvider.GetRequiredService<ISkillDecayService>();
-            var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             var notifier = new SkillDecayNotifier();
-            notifier.Attach(emailService);
+            notifier.Attach((ISkillDecayObserver)emailService);
 
             var users = await context.Users
                 .Include(u => u.Skills)
