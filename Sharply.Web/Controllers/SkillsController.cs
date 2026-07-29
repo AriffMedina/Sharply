@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sharply.Application.Services;
 using Sharply.Domain.Enums;
 using Sharply.Domain.Interfaces;
 using Sharply.Domain.Models;

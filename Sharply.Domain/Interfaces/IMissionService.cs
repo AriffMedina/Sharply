@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sharply.Application.Services
+namespace Sharply.Domain.Interfaces
 {
     public interface IMissionService
     {

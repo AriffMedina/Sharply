@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sharply.Application.Services
+namespace Sharply.Domain.Interfaces
 {
     internal interface IGamificationService
     {
