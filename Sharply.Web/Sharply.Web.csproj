@@ -8,13 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Sharply.Api\**\*.cs" />
-		<Compile Remove="Sharply.Domain\**\*.cs" />
-		<Compile Remove="Sharply.Application\**\*.cs" />
-		<Compile Remove="Sharply.Infrastructure\**\*.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
