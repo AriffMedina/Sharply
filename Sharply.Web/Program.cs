@@ -14,7 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Autenticación basada en cookies para Login/Registro.
+// Autenticaciï¿½n basada en cookies para Login/Registro.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -31,7 +31,6 @@ builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
-builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 
 var app = builder.Build();
 
