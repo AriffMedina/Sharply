@@ -10,4 +10,4 @@ namespace Sharply.Domain.Enums
         Intermediate = 1,
         Sharp = 2,
     }
-}   
+}

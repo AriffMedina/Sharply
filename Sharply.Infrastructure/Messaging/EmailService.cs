@@ -45,7 +45,7 @@ namespace Sharply.Infrastructure.Messaging
                 await client.DisconnectAsync(true);
             }
 
-        
+
         }
 
         // Patrón Observer

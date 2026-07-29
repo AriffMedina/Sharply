@@ -36,7 +36,7 @@ namespace Sharply.Infrastructure.Jobs
 
         private async Task RunDecayCheckAsync()
         {
-    
+
             using var scope = _serviceProvider.CreateScope();
 
             var decayService = scope.ServiceProvider.GetRequiredService<ISkillDecayService>();
