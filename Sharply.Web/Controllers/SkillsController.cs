@@ -7,7 +7,7 @@ using Sharply.Domain.Models;
 using Sharply.Web.ViewModels;
 using System.Security.Claims;
 
-namespace Sharply.Controllers
+namespace Sharply.Web.Controllers
 {
     [Authorize]
     public class SkillsController : Controller

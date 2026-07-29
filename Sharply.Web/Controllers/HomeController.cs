@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Sharply.Application.Services;
 using Sharply.Domain.Interfaces;
 using Sharply.Domain.Models;
-using Sharply.Models;
+using Sharply.Web.Models;
 using Sharply.Web.ViewModels;
 using System.Diagnostics;
 using System.Security.Claims;
 
-namespace Sharply.Controllers
+namespace Sharply.Web.Controllers
 {
     [Authorize]
     public class HomeController : Controller

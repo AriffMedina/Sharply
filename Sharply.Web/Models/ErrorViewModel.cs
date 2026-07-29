@@ -1,4 +1,4 @@
-namespace Sharply.Models
+namespace Sharply.Web.Models
 {
     public class ErrorViewModel
     {
