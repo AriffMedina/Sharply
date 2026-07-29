@@ -8,32 +8,6 @@ Rama `chore/saneamiento`, creada desde `Deuda_Tecnica`. 22 commits, sin tocar `m
 
 **Después:** namespaces unificados y coherentes en todo `Sharply.Web`, sin registros duplicados, sin vestigios de carpetas viejas, sin secretos en el repo (la clave real ya rotada y movida a User Secrets, verificado que nunca tocó el historial de git), `AuthService` desacoplado de `AppDbContext` vía `IUserRepository`, la Api con una capa de DTOs propia en vez de exponer las entidades de dominio, y `DecayWorker` reparado y activado de verdad — se probó en vivo contra la base de datos real, corrió su primer ciclo, y no explotó. Build en 0 warnings, 0 errores, en Debug y Release.
 
-## Commits realizados (en orden)
-
-1. `chore: ignorar contexto local de claude code`
-2. `style: aplicar dotnet format`
-3. `chore: quitar duplicado de folder include en sharply.web.csproj`
-4. `chore: eliminar compile remove obsoletos en sharply.web.csproj`
-5. `chore: eliminar weatherforecast de sharply.api`
-6. `refactor: eliminar registro duplicado de iskilldecayservice`
-7. `refactor: renombrar archivo skilllogcontroller a skilllogscontroller`
-8. `refactor: eliminar usings sin usar en appdbcontext`
-9. `fix: validar configuracion smtp en emailservice`
-10. `refactor: agregar namespace a accountcontroller`
-11. `refactor: unificar namespaces de sharply.web`
-12. `refactor: mover interfaces de servicios a domain.interfaces`
-13. `refactor: introducir iuserrepository para authservice`
-14. `refactor: introducir dtos en controllers de api`
-15. `chore: unificar nombre de base de datos como sharplydb`
-16. `fix: corregir dominio de correo remitente`
-17. `chore: mover password smtp a user secrets`
-18. `fix: reparar y activar decayworker`
-19. `fix: registrar idecaystrategy en api`
-20. `docs: documentar gamificationservice como placeholder`
-21. `docs: documentar lineardecaystrategy como referencia`
-22. `docs: diagnostico inicial del saneamiento`
-23. `docs: registrar decisiones pendientes de saneamiento`
-
 ## Cambios más significativos por área
 
 - **Arquitectura hexagonal:** `ISkillDecayService`, `IMissionService` e `IGamificationService` movidos de `Sharply.Application/Services/` a `Sharply.Domain/Interfaces/`, donde vive el resto de los puertos. `AuthService` dejó de depender de `AppDbContext` directamente — ahora inyecta `IUserRepository`, siguiendo el mismo patrón que `Skill`/`SkillLog`.
