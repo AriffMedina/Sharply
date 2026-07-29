@@ -19,10 +19,19 @@ namespace Sharply.Infrastructure.Messaging
 
         public async Task SendDecayAlarmAsync(string toEmail, string skillName, int daysInactive)
         {
+            string senderEmail = _config["EmailSettings:SenderEmail"]
+                ?? throw new InvalidOperationException("Falta EmailSettings:SenderEmail en la configuración");
+            string smtpServer = _config["EmailSettings:SmtpServer"]
+                ?? throw new InvalidOperationException("Falta EmailSettings:SmtpServer en la configuración");
+            string smtpPort = _config["EmailSettings:SmtpPort"]
+                ?? throw new InvalidOperationException("Falta EmailSettings:SmtpPort en la configuración");
+            string password = _config["EmailSettings:Password"]
+                ?? throw new InvalidOperationException("Falta EmailSettings:Password en la configuración");
+
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(
                 _config["EmailSettings:SenderName"],
-                _config["EmailSettings:SenderEmail"]));
+                senderEmail));
 
             message.To.Add(new MailboxAddress("", toEmail));
             message.Subject = $"⚠️ Alerta Sharply: Estás olvidando {skillName}";
@@ -36,8 +45,8 @@ namespace Sharply.Infrastructure.Messaging
             using var client = new MailKit.Net.Smtp.SmtpClient();
             try
             {
-                await client.ConnectAsync(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:SmtpPort"]), SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:Password"]);
+                await client.ConnectAsync(smtpServer, int.Parse(smtpPort), SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(senderEmail, password);
                 await client.SendAsync(message);
             }
             finally
