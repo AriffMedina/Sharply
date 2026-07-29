@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sharply.Api.DTOs;
 using Sharply.Domain.Interfaces;
-using Sharply.Domain.Models;
 
 namespace Sharply.Api.Controllers;
 
@@ -18,21 +18,21 @@ public class SkillLogsController : ControllerBase
     // GET /api/skilllogs
     // GET /api/skilllogs?skillId=3
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<SkillLog>>> GetAll([FromQuery] int? skillId)
+    public async Task<ActionResult<IEnumerable<SkillLogResponse>>> GetAll([FromQuery] int? skillId)
     {
         if (skillId.HasValue)
         {
             var filtered = await _skillLogRepository.GetBySkillIdAsync(skillId.Value);
-            return Ok(filtered);
+            return Ok(filtered.Select(SkillLogResponse.From));
         }
 
         var logs = await _skillLogRepository.GetAllAsync();
-        return Ok(logs);
+        return Ok(logs.Select(SkillLogResponse.From));
     }
 
     // GET /api/skilllogs/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<SkillLog>> GetById(int id)
+    public async Task<ActionResult<SkillLogResponse>> GetById(int id)
     {
         var log = await _skillLogRepository.GetByIdAsync(id);
 
@@ -41,6 +41,6 @@ public class SkillLogsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(log);
+        return Ok(SkillLogResponse.From(log));
     }
 }
