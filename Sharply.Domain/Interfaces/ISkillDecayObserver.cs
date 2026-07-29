@@ -7,6 +7,6 @@ namespace Sharply.Domain.Interfaces
 {
     public interface ISkillDecayObserver
     {
-        void Update(Skill skillAtRisk, User user);
+        Task UpdateAsync(Skill skillAtRisk, User user);
     }
 }

@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sharply</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/skill-form.css" asp-append-version="true" />
+</head>
+<body class="dashboard-body">
+    <nav class="topnav">
+        <div class="topnav-left">
+            <a class="topnav-logo" asp-controller="Home" asp-action="Index">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                Sharply
+            </a>
+            <a class="topnav-link" asp-controller="Home" asp-action="Index">Dashboard</a>
+            <a class="topnav-link active" asp-controller="Skills" asp-action="Create">Add New Skill</a>
+        </div>
+        <div class="topnav-avatar">@(User.Identity?.Name?.Length > 0 ? User.Identity.Name.Substring(0, 1).ToUpper() : "?")</div>
+    </nav>
+
+    @RenderBody()
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

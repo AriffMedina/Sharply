@@ -33,6 +33,9 @@ namespace Sharply.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<double>("InitialRetention")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("LastPracticedAt")
                         .HasColumnType("datetime2");
 
@@ -98,6 +101,10 @@ namespace Sharply.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

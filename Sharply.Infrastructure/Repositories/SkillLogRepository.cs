@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 
 namespace Sharply.Infrastructure.Repositories;
+
 public class SkillLogRepository : ISkillLogRepository
 {
     private readonly AppDbContext _context;

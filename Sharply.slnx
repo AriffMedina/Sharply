@@ -3,5 +3,5 @@
   <Project Path="Sharply.Application/Sharply.Application.csproj" />
   <Project Path="Sharply.Domain/Sharply.Domain.csproj" />
   <Project Path="Sharply.Infrastructure/Sharply.Infrastructure.csproj" />
-  <Project Path="Sharply.Web.csproj" />
+  <Project Path="Sharply.Web/Sharply.Web.csproj" />
 </Solution>

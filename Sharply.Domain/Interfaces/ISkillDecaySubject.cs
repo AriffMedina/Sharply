@@ -9,6 +9,6 @@ namespace Sharply.Domain.Interfaces
     {
         void Attach(ISkillDecayObserver observer);
         void Detach(ISkillDecayObserver observer);
-        void Notify(Skill skillAtRisk, User user);
+        Task NotifyAsync(Skill skillAtRisk, User user);
     }
 }
