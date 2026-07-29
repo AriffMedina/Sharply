@@ -3,6 +3,7 @@ using Sharply.Domain.Interfaces;
 
 namespace Sharply.Application.Services
 {
+    /// <summary>Implementación de referencia del patrón Strategy — hoy no está registrada en ningún Program.cs.</summary>
     public class LinearDecayStrategy : IDecayStrategy
     {
         public double Calculate(double initialRetention, int daysInactive, MasteryLevel mastery, SkillPriority priority)
