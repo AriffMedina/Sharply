@@ -34,5 +34,17 @@ namespace Sharply.Tests
 
             Assert.Equal(0.3679, retention, precision: 4);
         }
+
+        [Fact]
+        public void Calculate_ComparesSharpHighVsRustyLow_HigherMasteryAndPriorityDecaySlower()
+        {
+            var strategy = new EbbinghausDecayStrategy();
+            const int daysInactive = 15;
+
+            var sharpHighRetention = strategy.Calculate(1.0, daysInactive, MasteryLevel.Sharp, SkillPriority.High);
+            var rustyLowRetention = strategy.Calculate(1.0, daysInactive, MasteryLevel.Rusty, SkillPriority.Low);
+
+            Assert.True(sharpHighRetention > rustyLowRetention);
+        }
     }
 }
