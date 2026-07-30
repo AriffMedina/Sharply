@@ -1,0 +1,29 @@
+name: CI - Sharply
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restaurar dependencias
+        run: dotnet restore Sharply.slnx
+
+      - name: Compilar solución
+        run: dotnet build Sharply.slnx --no-restore --configuration Release
+
+      - name: Ejecutar tests
+        run: dotnet test Sharply.slnx --no-build --configuration Release --verbosity normal
