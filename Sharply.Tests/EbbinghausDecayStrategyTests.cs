@@ -18,5 +18,21 @@ namespace Sharply.Tests
 
             Assert.Equal(0.85, retention);
         }
+
+        [Fact]
+        public void Calculate_WithIntermediateMediumAtStabilityBoundary_ReturnsExponentialDecayConstant()
+        {
+            var strategy = new EbbinghausDecayStrategy();
+
+            // Con mastery=Intermediate (stability=30) y priority=Medium (multiplicador=1.0),
+            // daysInactive=30 hace que daysInactive/stability = 1, quedando retention = e^-1.
+            var retention = strategy.Calculate(
+                initialRetention: 1.0,
+                daysInactive: 30,
+                mastery: MasteryLevel.Intermediate,
+                priority: SkillPriority.Medium);
+
+            Assert.Equal(0.3679, retention, precision: 4);
+        }
     }
 }
