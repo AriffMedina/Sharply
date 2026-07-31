@@ -41,6 +41,10 @@
     </div>
     </div>
 
+    <div class="landing-progress-rail" id="landingProgressRail" aria-hidden="true">
+        <div class="landing-progress-fill" id="landingProgressFill"></div>
+    </div>
+
     <div class="landing-about">
 
         <section class="landing-about-section">
@@ -150,3 +154,30 @@
     </div>
 
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var about = document.querySelector('.landing-about');
+            var rail = document.getElementById('landingProgressRail');
+            var fill = document.getElementById('landingProgressFill');
+            if (!about || !rail || !fill) return;
+
+            function update() {
+                var rect = about.getBoundingClientRect();
+                var viewportH = window.innerHeight;
+                var total = rect.height - viewportH;
+                var scrolled = -rect.top;
+                var ratio = total > 0 ? Math.min(1, Math.max(0, scrolled / total)) : (rect.top < viewportH ? 1 : 0);
+                var inRange = rect.top < viewportH && rect.bottom > 0;
+
+                rail.classList.toggle('visible', inRange);
+                fill.style.height = (ratio * 100) + '%';
+            }
+
+            update();
+            window.addEventListener('scroll', update, { passive: true });
+            window.addEventListener('resize', update);
+        })();
+    </script>
+}

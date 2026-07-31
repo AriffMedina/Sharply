@@ -124,7 +124,56 @@
         width: 100%;
         max-width: 300px;
         height: auto;
+        animation: landing-owl-float 4s ease-in-out infinite;
     }
+
+@keyframes landing-owl-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-visual-panel .mascot-owl {
+        animation: none;
+    }
+}
+
+/* ----- Barra vertical de progreso de lectura del "about" ----- */
+.landing-progress-rail {
+    position: fixed;
+    top: 50%;
+    right: 22px;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 140px;
+    border-radius: var(--radius-pill);
+    background: var(--card-border);
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 50;
+}
+
+    .landing-progress-rail.visible {
+        opacity: 1;
+    }
+
+.landing-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: var(--primary);
+    border-radius: inherit;
+}
+
+@media (max-width: 900px) {
+    .landing-progress-rail {
+        display: none;
+    }
+}
 
 @media (max-width: 640px) {
     .landing-title {

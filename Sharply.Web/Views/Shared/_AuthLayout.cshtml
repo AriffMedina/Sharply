@@ -13,6 +13,7 @@
 <body class="dashboard-body auth-body @ViewData["BodyClass"]">
     @RenderBody()
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/motion.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
