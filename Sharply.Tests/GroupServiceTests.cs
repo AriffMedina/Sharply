@@ -53,6 +53,9 @@ namespace Sharply.Tests
             public List<GroupSkill> GroupSkills { get; } = new();
             private int _nextId = 1;
 
+            public Task<GroupSkill?> GetByIdAsync(int id) =>
+                Task.FromResult(GroupSkills.FirstOrDefault(gs => gs.Id == id));
+
             public Task<IEnumerable<GroupSkill>> GetByGroupIdAsync(int groupId) =>
                 Task.FromResult<IEnumerable<GroupSkill>>(GroupSkills.Where(gs => gs.GroupId == groupId).ToList());
 
@@ -62,6 +65,10 @@ namespace Sharply.Tests
                 GroupSkills.Add(groupSkill);
                 return Task.CompletedTask;
             }
+
+            public Task UpdateAsync(GroupSkill groupSkill) => Task.CompletedTask;
+
+            public Task DeleteAsync(int id) { GroupSkills.RemoveAll(gs => gs.Id == id); return Task.CompletedTask; }
 
             public Task DeleteByGroupIdAsync(int groupId) { GroupSkills.RemoveAll(gs => gs.GroupId == groupId); return Task.CompletedTask; }
         }
@@ -189,6 +196,93 @@ namespace Sharply.Tests
 
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 service.CreateGroupAsync(ownerUserId: 1, "Squad C"));
+        }
+
+        [Fact]
+        public async Task DeleteGroupSkillAsync_RemovesTemplateAndEveryMemberInstance()
+        {
+            var groups = new FakeGroupRepository();
+            var members = new FakeGroupMemberRepository();
+            var groupSkills = new FakeGroupSkillRepository();
+            var skills = new FakeSkillRepository();
+            var users = new FakeUserRepository(new[] { new User { Id = 1, Name = "Owner" }, new User { Id = 2, Name = "Member" } });
+            var service = BuildService(groups, members, groupSkills, skills, users);
+
+            var group = await service.CreateGroupAsync(ownerUserId: 1, "Squad A");
+            members.Members.Add(new GroupMember { Id = 99, GroupId = group.Id, UserId = 2, JoinedAt = DateTime.UtcNow });
+            await service.AddGroupSkillAsync(group.Id, "React", Level.Intermediate, SkillPriority.High);
+            var groupSkillId = groupSkills.GroupSkills.Single().Id;
+
+            await service.DeleteGroupSkillAsync(group.Id, groupSkillId);
+
+            Assert.Empty(groupSkills.GroupSkills);
+            Assert.DoesNotContain(skills.Skills, s => s.Name == "React");
+        }
+
+        [Fact]
+        public async Task UpdateGroupSkillAsync_PropagatesRenameAndLevelToEveryMemberInstance()
+        {
+            var groups = new FakeGroupRepository();
+            var members = new FakeGroupMemberRepository();
+            var groupSkills = new FakeGroupSkillRepository();
+            var skills = new FakeSkillRepository();
+            var users = new FakeUserRepository(new[] { new User { Id = 1, Name = "Owner" }, new User { Id = 2, Name = "Member" } });
+            var service = BuildService(groups, members, groupSkills, skills, users);
+
+            var group = await service.CreateGroupAsync(ownerUserId: 1, "Squad A");
+            members.Members.Add(new GroupMember { Id = 99, GroupId = group.Id, UserId = 2, JoinedAt = DateTime.UtcNow });
+            await service.AddGroupSkillAsync(group.Id, "React", Level.Intermediate, SkillPriority.High);
+            var groupSkillId = groupSkills.GroupSkills.Single().Id;
+
+            await service.UpdateGroupSkillAsync(group.Id, groupSkillId, "React.js", Level.Advanced, SkillPriority.Low);
+
+            Assert.Equal("React.js", groupSkills.GroupSkills.Single().Name);
+            Assert.All(skills.Skills, s =>
+            {
+                Assert.Equal("React.js", s.Name);
+                Assert.Equal(Level.Advanced, s.Level);
+                Assert.Equal(SkillPriority.Low, s.Priority);
+            });
+        }
+
+        [Fact]
+        public async Task LeaveGroupAsync_MemberLeaves_DeletesGroupSkillInstancesInsteadOfMakingThemPersonal()
+        {
+            var groups = new FakeGroupRepository();
+            var members = new FakeGroupMemberRepository();
+            var groupSkills = new FakeGroupSkillRepository();
+            var skills = new FakeSkillRepository();
+            var users = new FakeUserRepository(new[] { new User { Id = 1, Name = "Owner" }, new User { Id = 2, Name = "Member" } });
+            var service = BuildService(groups, members, groupSkills, skills, users);
+
+            var group = await service.CreateGroupAsync(ownerUserId: 1, "Squad A");
+            members.Members.Add(new GroupMember { Id = 99, GroupId = group.Id, UserId = 2, JoinedAt = DateTime.UtcNow });
+            await service.AddGroupSkillAsync(group.Id, "React", Level.Intermediate, SkillPriority.High);
+
+            await service.LeaveGroupAsync(userId: 2);
+
+            Assert.DoesNotContain(skills.Skills, s => s.UserId == 2);
+            Assert.Contains(skills.Skills, s => s.UserId == 1 && s.Name == "React");
+        }
+
+        [Fact]
+        public async Task LeaveGroupAsync_OwnerDeletesGroup_DeletesGroupSkillInstancesForEveryMember()
+        {
+            var groups = new FakeGroupRepository();
+            var members = new FakeGroupMemberRepository();
+            var groupSkills = new FakeGroupSkillRepository();
+            var skills = new FakeSkillRepository();
+            var users = new FakeUserRepository(new[] { new User { Id = 1, Name = "Owner" }, new User { Id = 2, Name = "Member" } });
+            var service = BuildService(groups, members, groupSkills, skills, users);
+
+            var group = await service.CreateGroupAsync(ownerUserId: 1, "Squad A");
+            members.Members.Add(new GroupMember { Id = 99, GroupId = group.Id, UserId = 2, JoinedAt = DateTime.UtcNow });
+            await service.AddGroupSkillAsync(group.Id, "React", Level.Intermediate, SkillPriority.High);
+
+            await service.LeaveGroupAsync(userId: 1);
+
+            Assert.Empty(skills.Skills);
+            Assert.Empty(groupSkills.GroupSkills);
         }
     }
 }

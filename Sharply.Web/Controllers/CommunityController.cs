@@ -51,6 +51,7 @@ namespace Sharply.Web.Controllers
                 model.AllTimeLeaderboard = allTime.Select(ToRow).ToList();
                 model.GroupSkills = groupSkills.Select(gs => new GroupSkillRowViewModel
                 {
+                    Id = gs.Id,
                     Name = gs.Name,
                     Level = gs.Level.ToString(),
                     Priority = gs.Priority.ToString()
@@ -112,6 +113,34 @@ namespace Sharply.Web.Controllers
                 var parsedLevel = Enum.TryParse<Level>(level, out var l) ? l : Level.Intermediate;
                 var parsedPriority = Enum.TryParse<SkillPriority>(priority, out var p) ? p : SkillPriority.Medium;
                 await _groupService.AddGroupSkillAsync(group.Id, name, parsedLevel, parsedPriority);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditGroupSkill(int groupSkillId, string name, string level, string priority)
+        {
+            var group = await _groupService.GetGroupForUserAsync(CurrentUserId);
+
+            if (group is not null && group.OwnerUserId == CurrentUserId && !string.IsNullOrWhiteSpace(name))
+            {
+                var parsedLevel = Enum.TryParse<Level>(level, out var l) ? l : Level.Intermediate;
+                var parsedPriority = Enum.TryParse<SkillPriority>(priority, out var p) ? p : SkillPriority.Medium;
+                await _groupService.UpdateGroupSkillAsync(group.Id, groupSkillId, name, parsedLevel, parsedPriority);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteGroupSkill(int groupSkillId)
+        {
+            var group = await _groupService.GetGroupForUserAsync(CurrentUserId);
+
+            if (group is not null && group.OwnerUserId == CurrentUserId)
+            {
+                await _groupService.DeleteGroupSkillAsync(group.Id, groupSkillId);
             }
 
             return RedirectToAction("Index");

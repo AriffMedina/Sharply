@@ -16,7 +16,14 @@ namespace Sharply.Domain.Interfaces
 
         Task AddGroupSkillAsync(int groupId, string name, Level level, SkillPriority priority);
 
-        /// <summary>Si quien sale es el dueño, se borra el grupo entero (los miembros quedan, sus skills pasan a ser personales).</summary>
+        /// <summary>Actualiza nombre/nivel/prioridad de la GroupSkill y propaga el cambio a la Skill de cada miembro.</summary>
+        Task UpdateGroupSkillAsync(int groupId, int groupSkillId, string name, Level level, SkillPriority priority);
+
+        /// <summary>Borra la GroupSkill y la Skill propagada de cada miembro (no queda ni como skill personal).</summary>
+        Task DeleteGroupSkillAsync(int groupId, int groupSkillId);
+
+        /// <summary>Si quien sale es el dueño, se borra el grupo entero. En ambos casos (dueño o miembro),
+        /// las skills que venían del grupo se borran por completo — no pasan a ser personales.</summary>
         Task LeaveGroupAsync(int userId);
     }
 }

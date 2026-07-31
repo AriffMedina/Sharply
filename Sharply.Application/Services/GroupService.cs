@@ -137,6 +137,43 @@ namespace Sharply.Application.Services
             }
         }
 
+        public async Task UpdateGroupSkillAsync(int groupId, int groupSkillId, string name, Level level, SkillPriority priority)
+        {
+            var groupSkill = await _groupSkillRepository.GetByIdAsync(groupSkillId);
+            if (groupSkill is null || groupSkill.GroupId != groupId) return;
+
+            var oldName = groupSkill.Name;
+            groupSkill.Name = name.Trim();
+            groupSkill.Level = level;
+            groupSkill.Priority = priority;
+            await _groupSkillRepository.UpdateAsync(groupSkill);
+
+            var groupSkillInstances = (await _skillRepository.GetByGroupIdAsync(groupId))
+                .Where(s => s.Name == oldName);
+
+            foreach (var skill in groupSkillInstances)
+            {
+                skill.Name = groupSkill.Name;
+                skill.Level = level;
+                skill.Priority = priority;
+                await _skillRepository.UpdateAsync(skill);
+            }
+        }
+
+        public async Task DeleteGroupSkillAsync(int groupId, int groupSkillId)
+        {
+            var groupSkill = await _groupSkillRepository.GetByIdAsync(groupSkillId);
+            if (groupSkill is null || groupSkill.GroupId != groupId) return;
+
+            var groupSkillInstances = (await _skillRepository.GetByGroupIdAsync(groupId))
+                .Where(s => s.Name == groupSkill.Name);
+
+            foreach (var skill in groupSkillInstances)
+                await _skillRepository.DeleteAsync(skill.Id);
+
+            await _groupSkillRepository.DeleteAsync(groupSkillId);
+        }
+
         public async Task LeaveGroupAsync(int userId)
         {
             var membership = await _groupMemberRepository.GetByUserIdAsync(userId);
@@ -147,14 +184,11 @@ namespace Sharply.Application.Services
 
             if (group.OwnerUserId == userId)
             {
-                // El dueño se va: se borra el grupo entero. Las skills de TODOS los miembros
-                // pasan a ser personales (no se pierde curva ni historial de nadie).
+                // El dueño se va: se borra el grupo entero, junto con las skills de grupo de TODOS
+                // los miembros (no pasan a ser personales, se eliminan por completo).
                 var groupSkillInstances = await _skillRepository.GetByGroupIdAsync(group.Id);
                 foreach (var skill in groupSkillInstances)
-                {
-                    skill.GroupId = null;
-                    await _skillRepository.UpdateAsync(skill);
-                }
+                    await _skillRepository.DeleteAsync(skill.Id);
 
                 await _groupSkillRepository.DeleteByGroupIdAsync(group.Id);
                 await _groupMemberRepository.DeleteByGroupIdAsync(group.Id);
@@ -169,14 +203,12 @@ namespace Sharply.Application.Services
             }
             else
             {
+                // El miembro se va: sus skills de grupo se eliminan, no quedan como personales.
                 var memberSkills = (await _skillRepository.GetByUserIdAsync(userId))
                     .Where(s => s.GroupId == group.Id);
 
                 foreach (var skill in memberSkills)
-                {
-                    skill.GroupId = null;
-                    await _skillRepository.UpdateAsync(skill);
-                }
+                    await _skillRepository.DeleteAsync(skill.Id);
 
                 await _groupMemberRepository.DeleteAsync(membership.Id);
             }

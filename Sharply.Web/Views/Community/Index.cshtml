@@ -278,6 +278,26 @@
                                     <div class="community-skill-level">@gs.Level</div>
                                 </div>
                                 <span class="badge @gs.Priority.ToLower()">@gs.Priority</span>
+
+                                @if (Model.IsOwner)
+                                {
+                                    <div class="community-skill-actions">
+                                        <button type="button" class="icon-btn-sm" title="Edit skill"
+                                                data-modal-open="modal-edit-skill"
+                                                data-skill-id="@gs.Id" data-skill-name="@gs.Name"
+                                                data-skill-level="@gs.Level" data-skill-priority="@gs.Priority">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                                        </button>
+                                        <form method="post" asp-controller="Community" asp-action="DeleteGroupSkill" class="community-skill-delete-form"
+                                              onsubmit="return confirm('¿Eliminar \'@gs.Name\' del grupo? Se borra de todos los miembros y no se puede deshacer.')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="groupSkillId" value="@gs.Id" />
+                                            <button type="submit" class="icon-btn-sm icon-btn-sm--danger" title="Delete skill">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" /></svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         }
                         @if (Model.GroupSkills.Count == 0)
@@ -295,6 +315,45 @@
                     }
                 </div>
             </div>
+
+            @if (Model.IsOwner)
+            {
+                <div class="modal-overlay" id="modal-edit-skill">
+                    <div class="modal-box">
+                        <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+                        <div class="community-card-icon community-card-icon--violet">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                        </div>
+                        <div class="form-section-title">Edit squad skill</div>
+                        <div class="field-hint community-card-hint">Changes apply to every current member.</div>
+                        <form method="post" asp-controller="Community" asp-action="EditGroupSkill" id="editGroupSkillForm">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="groupSkillId" id="editSkillId" value="" />
+                            <div class="field-group">
+                                <label class="field-label">Skill name</label>
+                                <input class="field-input" type="text" name="name" id="editSkillName" required />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Level</label>
+                                <select class="field-input" name="level" id="editSkillLevel">
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Priority</label>
+                                <select class="field-input" name="priority" id="editSkillPriority">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" type="submit">Save changes</button>
+                        </form>
+                    </div>
+                </div>
+            }
         }
 
     </div>
@@ -323,6 +382,21 @@
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal-overlay.open').forEach(function (o) { o.classList.remove('open'); });
             }
+        });
+
+        document.querySelectorAll('[data-skill-id]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var idInput = document.getElementById('editSkillId');
+                var nameInput = document.getElementById('editSkillName');
+                var levelInput = document.getElementById('editSkillLevel');
+                var priorityInput = document.getElementById('editSkillPriority');
+                if (!idInput) return;
+
+                idInput.value = btn.dataset.skillId;
+                nameInput.value = btn.dataset.skillName;
+                levelInput.value = btn.dataset.skillLevel;
+                priorityInput.value = btn.dataset.skillPriority;
+            });
         });
 
         document.querySelectorAll('.community-tab').forEach(function (tab) {
