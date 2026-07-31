@@ -23,6 +23,8 @@ namespace Sharply.Web.ViewModels
     {
         public string UserName { get; set; } = string.Empty;
         public int StreakDays { get; set; }
+        public int TotalXp { get; set; }
+        public int PlayerLevel { get; set; } = 1;
 
         public double AvgRetention { get; set; }
 

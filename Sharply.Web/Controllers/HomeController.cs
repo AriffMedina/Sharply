@@ -18,19 +18,22 @@ namespace Sharply.Web.Controllers
         private readonly ISkillLogRepository _skillLogRepository;
         private readonly ISkillDecayService _skillDecayService;
         private readonly IStreakService _streakService;
+        private readonly IUserRepository _userRepository;
 
         public HomeController(
             IEmailService emailService,
             ISkillRepository skillRepository,
             ISkillLogRepository skillLogRepository,
             ISkillDecayService skillDecayService,
-            IStreakService streakService)
+            IStreakService streakService,
+            IUserRepository userRepository)
         {
             _emailService = emailService;
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
             _skillDecayService = skillDecayService;
             _streakService = streakService;
+            _userRepository = userRepository;
         }
 
         [AllowAnonymous]
@@ -108,10 +111,15 @@ namespace Sharply.Web.Controllers
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
 
+        // XP lineal por nivel de jugador: 100 XP = 1 nivel, sin techo.
+        private const int XpPerLevel = 100;
+
         private async Task<DashboardViewModel> BuildDashboardAsync()
         {
             var userId = CurrentUserId;
             var skills = (await _skillRepository.GetByUserIdAsync(userId)).ToList();
+            var user = await _userRepository.GetByIdAsync(userId);
+            var totalXp = user?.TotalXp ?? 0;
 
             var cards = new List<SkillCardViewModel>();
             foreach (var skill in skills)
@@ -123,6 +131,8 @@ namespace Sharply.Web.Controllers
             {
                 UserName = User.FindFirstValue(ClaimTypes.Name) ?? "Learner",
                 StreakDays = await _streakService.GetCurrentStreakAsync(userId),
+                TotalXp = totalXp,
+                PlayerLevel = (totalXp / XpPerLevel) + 1,
                 AvgRetention = cards.Count > 0 ? Math.Round(cards.Average(c => c.RetentionPercent), 1) : 0,
                 WeeklyActivityPoints = weeklyPoints,
                 WeeklyActivityStartLabel = weeklyStartLabel,

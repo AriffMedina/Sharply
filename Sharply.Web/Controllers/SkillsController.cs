@@ -14,15 +14,18 @@ namespace Sharply.Web.Controllers
         private readonly ISkillRepository _skillRepository;
         private readonly ISkillLogRepository _skillLogRepository;
         private readonly ISkillDecayService _skillDecayService;
+        private readonly IMissionService _missionService;
 
         public SkillsController(
             ISkillRepository skillRepository,
             ISkillLogRepository skillLogRepository,
-            ISkillDecayService skillDecayService)
+            ISkillDecayService skillDecayService,
+            IMissionService missionService)
         {
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
             _skillDecayService = skillDecayService;
+            _missionService = missionService;
         }
 
         // ── LIST ──────────────────────────────────────────────
@@ -58,12 +61,16 @@ namespace Sharply.Web.Controllers
             await _skillRepository.AddAsync(skill);
 
             if (!string.IsNullOrWhiteSpace(model.Description))
+            {
                 await _skillLogRepository.AddAsync(new SkillLog
                 {
                     SkillId = skill.Id,
                     Notes = model.Description!.Trim(),
                     PracticedAt = DateTime.UtcNow
                 });
+
+                await _missionService.EvaluateMissionsAsync(CurrentUserId, skillWasAtRisk: false);
+            }
 
             TempData["SkillAdded"] = skill.Name;
             return RedirectToAction("Index", "Home");
@@ -122,6 +129,9 @@ namespace Sharply.Web.Controllers
             var skill = await _skillRepository.GetByIdAsync(id);
             if (skill is null || skill.UserId != CurrentUserId) return NotFound();
 
+            var retentionBeforePractice = await _skillDecayService.CalculateRetentionAsync(skill);
+            var wasAtRisk = retentionBeforePractice < skill.User.DecayRetentionThreshold;
+
             skill.LastPracticedAt = DateTime.UtcNow;
             skill.InitialRetention = 1.0;
 
@@ -136,6 +146,8 @@ namespace Sharply.Web.Controllers
                 Notes = "Practice session logged.",
                 PracticedAt = DateTime.UtcNow
             });
+
+            await _missionService.EvaluateMissionsAsync(CurrentUserId, wasAtRisk);
 
             return RedirectToAction("Index", "Home");
         }

@@ -34,6 +34,9 @@ builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
 builder.Services.AddScoped<IStreakService, StreakService>();
 builder.Services.AddScoped<IDecayStrategyResolver, DecayStrategyResolver>();
+builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+builder.Services.AddScoped<IMissionCompletionRepository, MissionCompletionRepository>();
+builder.Services.AddScoped<IMissionService, MissionService>();
 builder.Services.AddHostedService<DecayWorker>();
 
 var app = builder.Build();

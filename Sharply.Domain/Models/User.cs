@@ -17,6 +17,8 @@ namespace Sharply.Domain.Models
         public double DecayRetentionThreshold { get; set; } = 0.5;
         public DecayStrategyType DecayStrategy { get; set; } = DecayStrategyType.Ebbinghaus;
 
+        public int TotalXp { get; set; }
+
         public ICollection<Skill> Skills { get; set; } = new List<Skill>();
     }
 }

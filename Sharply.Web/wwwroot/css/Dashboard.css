@@ -261,6 +261,24 @@ button {
         flex-shrink: 0;
     }
 
+.xp-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-blue-soft);
+    color: var(--accent-blue);
+    border-radius: var(--radius-pill);
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+    .xp-pill svg {
+        flex-shrink: 0;
+    }
+
 .user-chip {
     display: flex;
     align-items: center;

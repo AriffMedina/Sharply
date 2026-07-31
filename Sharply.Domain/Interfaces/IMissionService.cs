@@ -1,12 +1,16 @@
 ﻿using Sharply.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sharply.Domain.Interfaces
 {
     public interface IMissionService
     {
-        Task<SkillLog> CompleteMissionAsync(int skillId, string? notes);
+        Task<IEnumerable<Mission>> GetActiveMissionsAsync();
+        Task<IEnumerable<MissionCompletion>> GetCompletionsForCurrentPeriodAsync(int userId);
+
+        /// <summary>
+        /// Evalúa las misiones pendientes del usuario tras una práctica y otorga XP a las que se completaron.
+        /// </summary>
+        /// <param name="skillWasAtRisk">Si la skill recién practicada estaba en riesgo antes de este log (dispara "Rescata una skill en riesgo").</param>
+        Task EvaluateMissionsAsync(int userId, bool skillWasAtRisk);
     }
 }

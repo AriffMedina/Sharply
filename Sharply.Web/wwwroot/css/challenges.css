@@ -1,0 +1,102 @@
+/* ===== Sharply — Challenges page ===== */
+
+.challenges-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.challenge-card {
+    padding: 20px 22px;
+}
+
+.challenge-card--done {
+    border-color: var(--green-soft);
+}
+
+.challenge-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.challenge-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: var(--text-primary);
+}
+
+.challenge-desc {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.challenge-done-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--green-soft);
+    color: var(--green);
+    border-radius: var(--radius-pill);
+    padding: 2px 9px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.challenge-xp-badge {
+    flex-shrink: 0;
+    background: var(--accent-blue-soft);
+    color: var(--accent-blue);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.challenge-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.challenge-progress-track {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.challenge-progress-fill {
+    height: 100%;
+    background: var(--accent-blue);
+    border-radius: var(--radius-pill);
+    transition: width 0.2s ease;
+}
+
+.challenge-card--done .challenge-progress-fill {
+    background: var(--green);
+}
+
+.challenge-progress-label {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    min-width: 40px;
+    text-align: right;
+}
+
+.challenge-period {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+}
