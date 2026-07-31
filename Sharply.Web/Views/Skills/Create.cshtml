@@ -71,11 +71,13 @@
 
             <div class="field-group">
                 <div class="mastery-row">
-                    <label class="field-label" style="margin-bottom:0;" asp-for="InitialMasteryPercent">Initial Mastery</label>
-                    <span class="mastery-value" id="masteryValueLabel">10%</span>
+                    <label class="field-label" style="margin-bottom:0;">Current Level</label>
+                    <span class="mastery-value" id="levelValueLabel">Intermediate</span>
                 </div>
-                <input class="mastery-slider" type="range" min="0" max="100" asp-for="InitialMasteryPercent" id="masterySlider" />
-                <div class="field-hint">Set where you are today. We'll help you reach 100%.</div>
+                <!-- Esta rueda representa el NIVEL elegido para la skill, no la retención actual (esa se ve en el dashboard y decae con el tiempo). Son métricas distintas a propósito. -->
+                <input class="mastery-slider" type="range" min="0" max="2" step="1" name="Level" id="levelSlider" value="@((int)Model.Level)" />
+                <div class="level-ticks"><span>Beginner</span><span>Intermediate</span><span>Advanced</span></div>
+                <div class="field-hint">Choose where you're starting from. This shapes how fast it fades without practice.</div>
             </div>
         </form>
 
@@ -95,11 +97,11 @@
                         <svg viewBox="0 0 60 60">
                             <circle class="ring-track" cx="30" cy="30" r="26" />
                             <circle class="ring-progress intermediate" id="previewRing" cx="30" cy="30" r="26"
-                                    stroke-dasharray="163.36" stroke-dashoffset="147.02" />
+                                    stroke-dasharray="163.36" stroke-dashoffset="55.54" />
                         </svg>
-                        <div class="ring-value intermediate" id="previewRingValue">10%</div>
+                        <div class="ring-value intermediate level-text" id="previewRingValue">Intermediate</div>
                     </div>
-                    <div class="preview-ring-sub">MASTERY</div>
+                    <div class="preview-ring-sub">LEVEL</div>
                 </div>
 
                 <div class="preview-name" id="previewName">New Skill</div>
@@ -127,8 +129,8 @@
     <script>
         (function () {
         var nameInput = document.getElementById('skillName');
-        var slider = document.getElementById('masterySlider');
-        var masteryLabel = document.getElementById('masteryValueLabel');
+        var slider = document.getElementById('levelSlider');
+        var levelLabel = document.getElementById('levelValueLabel');
         var previewName = document.getElementById('previewName');
         var previewRing = document.getElementById('previewRing');
         var previewRingValue = document.getElementById('previewRingValue');
@@ -136,26 +138,26 @@
         var priorityPills = document.querySelectorAll('.priority-pill');
         var circumference = 2 * Math.PI * 26;
 
-        function masteryClass(percent) {
-        if (percent < 40) return 'rusty';
-        if (percent < 75) return 'intermediate';
-        return 'sharp';
-        }
+        var levels = [
+        { name: 'Beginner', fill: 0.33, cls: 'rusty' },
+        { name: 'Intermediate', fill: 0.66, cls: 'intermediate' },
+        { name: 'Advanced', fill: 1.0, cls: 'sharp' }
+        ];
 
         function updateRing() {
-        var percent = parseInt(slider.value, 10) || 0;
-        var offset = circumference * (1 - percent / 100);
-        var cls = masteryClass(percent);
+        var index = parseInt(slider.value, 10) || 0;
+        var level = levels[index];
+        var offset = circumference * (1 - level.fill);
 
-        masteryLabel.textContent = percent + '%';
-        previewRingValue.textContent = percent + '%';
+        levelLabel.textContent = level.name;
+        previewRingValue.textContent = level.name;
         previewRing.setAttribute('stroke-dasharray', circumference.toFixed(2));
         previewRing.setAttribute('stroke-dashoffset', offset.toFixed(2));
 
         previewRing.classList.remove('rusty', 'intermediate', 'sharp');
-        previewRing.classList.add(cls);
+        previewRing.classList.add(level.cls);
         previewRingValue.classList.remove('rusty', 'intermediate', 'sharp');
-        previewRingValue.classList.add(cls);
+        previewRingValue.classList.add(level.cls);
         }
 
         function updateName() {

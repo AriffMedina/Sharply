@@ -49,8 +49,8 @@ namespace Sharply.Web.Controllers
             {
                 Name = model.Name.Trim(),
                 Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium,
-                Level = MapMastery(model.InitialMasteryPercent),
-                InitialRetention = model.InitialMasteryPercent / 100.0,
+                Level = model.Level,
+                InitialRetention = 1.0,
                 LastPracticedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 UserId = CurrentUserId
@@ -80,7 +80,7 @@ namespace Sharply.Web.Controllers
             {
                 Name = skill.Name,
                 Priority = skill.Priority.ToString(),
-                InitialMasteryPercent = (int)Math.Round(skill.InitialRetention * 100)
+                Level = skill.Level
             };
             ViewBag.SkillId = id;
             return View(vm);
@@ -96,8 +96,7 @@ namespace Sharply.Web.Controllers
 
             skill.Name = model.Name.Trim();
             skill.Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium;
-            skill.Level = MapMastery(model.InitialMasteryPercent);
-            skill.InitialRetention = model.InitialMasteryPercent / 100.0;
+            skill.Level = model.Level;
             await _skillRepository.UpdateAsync(skill);
 
             TempData["SkillUpdated"] = skill.Name;
@@ -144,13 +143,6 @@ namespace Sharply.Web.Controllers
         // ── HELPERS ───────────────────────────────────────────
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-
-        private static Level MapMastery(int percent) => percent switch
-        {
-            < 40 => Level.Beginner,
-            < 75 => Level.Intermediate,
-            _ => Level.Advanced
-        };
 
         private async Task<SkillCardViewModel> MapSkillToCardAsync(Skill skill)
         {

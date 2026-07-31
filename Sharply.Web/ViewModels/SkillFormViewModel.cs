@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Sharply.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sharply.Web.ViewModels
 {
@@ -14,7 +15,6 @@ namespace Sharply.Web.ViewModels
         [StringLength(280)]
         public string? Description { get; set; }
 
-        [Range(0, 100)]
-        public int InitialMasteryPercent { get; set; } = 10;
+        public Level Level { get; set; } = Level.Intermediate;
     }
 }

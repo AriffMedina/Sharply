@@ -259,6 +259,22 @@ input[type="range"].mastery-slider {
     accent-color: var(--accent-blue);
 }
 
+.level-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+}
+
+.ring-value.level-text {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-align: center;
+    line-height: 1.1;
+}
+
 /* ----- Live preview ----- */
 .preview-label {
     display: flex;
