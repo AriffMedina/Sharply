@@ -1,44 +1,424 @@
 /* ===== Sharply — Community page ===== */
+/* Esta pantalla usa un tema oscuro propio (bienvenida + panel de squad),
+   distinto del resto de la app: mismo truco que .sidebar en Dashboard.css,
+   pisa las custom properties localmente en vez de tocar el tema global. */
 
+.main.community-page {
+    --bg: #0b0e1a;
+    --bg-elevated: #12162a;
+    --card-bg: #12162a;
+    --card-border: #232a44;
+    --text-primary: #f3f5f8;
+    --text-secondary: #9aa3b8;
+    --text-tertiary: #6b7280;
+    background: var(--bg);
+    color: var(--text-primary);
+}
+
+/* ----- Hero de bienvenida (sin squad todavía) ----- */
+.community-hero {
+    text-align: center;
+    max-width: 720px;
+    margin: 24px auto 40px;
+}
+
+.community-hero-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 14px;
+    line-height: 1.2;
+}
+
+    .community-hero-title span {
+        background: linear-gradient(135deg, var(--primary), #60a5fa);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+.community-hero-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0 0 32px;
+}
+
+.community-features {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.community-feature {
+    max-width: 190px;
+}
+
+.community-feature-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--radius-md);
+    background: var(--primary-soft);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+}
+
+.community-feature-title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.community-feature-text {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+}
+
+/* ----- Ilustración orbital (sin squad todavía) ----- */
+.community-orbit {
+    position: relative;
+    max-width: 720px;
+    height: 190px;
+    margin: 8px auto 8px;
+}
+
+.orbit-avatar {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-card);
+}
+
+.orbit-avatar--1 { top: 18px; left: 6%; }
+.orbit-avatar--2 { top: 90px; left: 20%; }
+.orbit-avatar--3 { top: 8px; right: 18%; }
+.orbit-avatar--4 { top: 96px; right: 4%; }
+
+.orbit-avatar--violet { border-color: var(--primary); color: var(--primary); }
+.orbit-avatar--green { border-color: var(--green); color: var(--green); }
+.orbit-avatar--amber { border-color: var(--amber); color: var(--amber); }
+.orbit-avatar--sky { border-color: var(--sky); color: var(--sky); }
+
+.orbit-card {
+    position: absolute;
+    top: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+}
+
+.orbit-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--green-soft);
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.orbit-card-text {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 12px;
+}
+
+.orbit-card-stack {
+    display: flex;
+    align-items: center;
+}
+
+.orbit-chip {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--card-bg);
+    margin-left: -8px;
+}
+
+    .orbit-chip:first-child {
+        margin-left: 0;
+    }
+
+.orbit-chip--1 { background: linear-gradient(135deg, var(--primary), #4f46e5); }
+.orbit-chip--2 { background: linear-gradient(135deg, var(--amber), #f59e0b); }
+.orbit-chip--3 { background: linear-gradient(135deg, var(--green), #10b981); }
+
+.orbit-card-count {
+    margin-left: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+/* ----- CTA final (crear / unirse) ----- */
+.community-cta {
+    text-align: center;
+    max-width: 640px;
+    margin: 16px auto 28px;
+}
+
+.community-cta-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+}
+
+.community-cta-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0 0 24px;
+}
+
+.community-cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.community-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    text-align: left;
+}
+
+.community-cta-btn-title {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.community-cta-btn-hint {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+/* ----- Nota final con la mascota ----- */
+.community-footnote {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+    .community-footnote svg {
+        flex-shrink: 0;
+        color: var(--primary);
+    }
+
+    .community-footnote .mascot-owl {
+        width: 40px;
+        height: 40px;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+/* ----- Modales de crear/unirse ----- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 8, 15, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+    .modal-overlay.open {
+        display: flex;
+    }
+
+.modal-box {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 28px 24px 24px;
+    box-shadow: var(--shadow-card);
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text-tertiary);
+    cursor: pointer;
+}
+
+    .modal-close:hover {
+        color: var(--text-primary);
+    }
+
+/* ----- Cards de crear/unirse ----- */
 .community-card {
     padding: 24px;
     margin-bottom: 20px;
     max-width: 720px;
 }
 
-.community-onboarding {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-    .community-onboarding .community-card {
-        flex: 1;
-        min-width: 260px;
-    }
-
-.community-group-header {
+.community-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.community-card-icon--violet {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.community-card-icon--green {
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.community-card--create {
+    border-color: var(--primary);
+}
+
+.community-card--join {
+    border-color: var(--green);
+}
+
+.community-card-hint {
+    margin-bottom: 16px;
+}
+
+.btn-secondary-green {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+    border-radius: var(--radius-sm);
+    padding: 9px 16px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+    .btn-secondary-green:hover {
+        background: var(--green-soft);
+    }
+
+.community-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+}
+
+    .community-card-title svg {
+        color: var(--amber);
+    }
+
+/* ----- Banner del grupo activo ----- */
+.community-group-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+}
+
+.community-group-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary), #4f46e5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.community-group-banner-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .community-group-name {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+}
+
+.community-group-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px;
+}
+
+.community-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-tertiary);
+}
+
+.community-stat-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+}
+
+.community-stat-value {
+    font-size: 0.86rem;
+    font-weight: 700;
     color: var(--text-primary);
 }
 
-.community-invite {
-    font-size: 0.82rem;
-    color: var(--text-tertiary);
-    margin-top: 4px;
-}
-
 .community-invite-code {
-    font-weight: 700;
-    color: var(--accent-blue);
+    color: var(--primary);
     letter-spacing: 0.05em;
 }
 
@@ -60,11 +440,31 @@
 }
 
     .community-tab.active {
-        background: var(--accent-blue);
-        border-color: var(--accent-blue);
+        background: var(--primary);
+        border-color: var(--primary);
         color: #fff;
     }
 
+/* ----- Grid de dos columnas: leaderboard + skills ----- */
+.community-panel-grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 20px;
+    align-items: start;
+}
+
+    .community-panel-grid .community-card {
+        max-width: none;
+        margin-bottom: 0;
+    }
+
+@media (max-width: 900px) {
+    .community-panel-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ----- Leaderboard ----- */
 .community-leaderboard {
     display: flex;
     flex-direction: column;
@@ -74,7 +474,7 @@
 .leaderboard-row-full {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     padding: 10px 6px;
     border-bottom: 1px solid var(--card-border);
 }
@@ -83,37 +483,140 @@
         border-bottom: none;
     }
 
-    .leaderboard-row-full .leaderboard-avatar {
-        width: 36px;
-        height: 36px;
-    }
-
-    .leaderboard-row-full .leaderboard-name {
-        font-size: 0.9rem;
-    }
-
-    .leaderboard-row-full .leaderboard-value {
-        font-size: 0.9rem;
-    }
-
-.community-group-skills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
+.leaderboard-rank {
+    width: 22px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--text-tertiary);
 }
 
+    .leaderboard-rank--1 { color: #f5c518; }
+    .leaderboard-rank--2 { color: #c0c0c8; }
+    .leaderboard-rank--3 { color: #cd7f32; }
+
+.leaderboard-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.leaderboard-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.leaderboard-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-sub {
+    font-size: 0.74rem;
+    color: var(--text-tertiary);
+}
+
+.leaderboard-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+/* ----- Squad skills ----- */
 .community-add-skill-form {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--card-border);
 }
 
     .community-add-skill-form .field-input {
         width: auto;
         flex: 1;
         min-width: 140px;
+    }
+
+.community-skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.community-skill-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+    .community-skill-row:last-child {
+        border-bottom: none;
+    }
+
+.community-skill-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.community-skill-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.community-skill-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.community-skill-level {
+    font-size: 0.74rem;
+    color: var(--text-tertiary);
+}
+
+.community-sync-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-top: 16px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+    .community-sync-note svg {
+        flex-shrink: 0;
+        color: var(--amber);
     }
 
 .skill-toast {
@@ -128,7 +631,7 @@
 }
 
 .skill-toast--err {
-    background: rgba(241, 99, 95, .1);
-    border: 1px solid rgba(241, 99, 95, .25);
-    color: #fca5a5;
+    background: var(--red-soft);
+    border: 1px solid var(--red-soft);
+    color: var(--red);
 }

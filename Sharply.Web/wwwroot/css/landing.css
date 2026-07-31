@@ -8,6 +8,14 @@
     gap: 56px;
 }
 
+.landing-hero-viewport {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+    min-height: calc(100vh - 48px);
+}
+
 .landing-header {
     display: flex;
     align-items: center;
@@ -22,6 +30,18 @@
     align-items: center;
     gap: 48px;
     flex-wrap: wrap;
+}
+
+.landing-scroll-cue {
+    display: flex;
+    justify-content: center;
+    color: var(--text-tertiary);
+    animation: landing-scroll-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes landing-scroll-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(8px); opacity: 1; }
 }
 
 .landing-copy {
@@ -46,66 +66,65 @@
 
 .landing-ctas {
     display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 340px;
 }
 
 .landing-cta-primary,
 .landing-cta-secondary {
-    padding: 13px 26px;
+    padding: 16px 26px;
     font-size: 0.95rem;
-    border-radius: var(--radius-sm);
-    font-weight: 700;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    letter-spacing: 0.02em;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
 }
 
 .landing-cta-primary {
-    background: var(--accent-blue);
+    background: var(--primary);
     color: #fff;
 }
 
     .landing-cta-primary:hover {
-        background: var(--accent-blue-hover);
+        background: var(--primary-hover);
     }
 
 .landing-cta-secondary {
     background: transparent;
     border-color: var(--card-border);
-    color: var(--text-primary);
+    color: var(--primary);
     transition: border-color 0.15s ease, color 0.15s ease;
 }
 
     .landing-cta-secondary:hover {
-        border-color: var(--accent-blue);
-        color: var(--accent-blue);
+        border-color: var(--primary);
     }
 
 .landing-visual {
     flex: 1 1 380px;
-    min-width: 300px;
+    min-width: 280px;
     display: flex;
     justify-content: center;
 }
 
 .landing-visual-panel {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 28px;
+    position: relative;
     width: 100%;
-    max-width: 420px;
+    max-width: 380px;
+    display: flex;
+    justify-content: center;
 }
 
-.landing-visual-caption {
-    margin: 14px 0 0;
-    text-align: center;
-    font-size: 0.82rem;
-    color: var(--text-tertiary);
-}
+    .landing-visual-panel .mascot-owl {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
 
 @media (max-width: 640px) {
     .landing-title {
@@ -120,4 +139,163 @@
     .landing-cta-secondary {
         width: 100%;
     }
+}
+
+/* ===== Landing — sección "about" (qué es Sharply, por qué existe) ===== */
+
+.landing-about {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-top: 8px;
+}
+
+.landing-about-section {
+}
+
+.landing-about-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.landing-about-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+    margin: 0 0 18px;
+    line-height: 1.25;
+}
+
+.landing-about-text {
+    font-size: 0.97rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin: 0 0 14px;
+    max-width: 720px;
+}
+
+.landing-about-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 28px;
+    max-width: 480px;
+}
+
+.landing-about-highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+.highlight-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .highlight-icon.sharp {
+        background: var(--green-soft);
+        color: var(--green);
+    }
+
+    .highlight-icon.intermediate {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--accent-blue);
+    }
+
+    .highlight-icon.rusty {
+        background: var(--red-soft);
+        color: var(--red);
+    }
+
+.highlight-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.highlight-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.landing-about-features {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 8px;
+}
+
+.landing-about-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.feature-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent-blue);
+}
+
+.feature-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.feature-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.landing-about-cta {
+    text-align: center;
+    padding: 48px 32px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+}
+
+    .landing-about-cta .landing-about-title {
+        font-size: 1.4rem;
+    }
+
+    .landing-about-cta .landing-about-text {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+.landing-about-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 12px 24px;
+    font-size: 0.95rem;
 }

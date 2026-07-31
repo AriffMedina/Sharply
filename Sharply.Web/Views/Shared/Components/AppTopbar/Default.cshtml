@@ -1,0 +1,94 @@
+@model Sharply.Web.ViewModels.AppTopbarViewModel
+
+@{
+    string Initials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2 ? $"{parts[0][0]}{parts[1][0]}" : name.Substring(0, Math.Min(2, name.Length));
+    }
+}
+
+<div class="topbar">
+    @if (Model.ShowSearch)
+    {
+        <div class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.35-4.35" /></svg>
+            <input type="text" id="skillSearchInput" placeholder="Search your skills..." autocomplete="off" />
+        </div>
+    }
+    <div class="streak-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-4 5-4 9a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 15.5C5 9 12 7 12 2z" /></svg>
+        @Model.StreakDays DAY STREAK
+    </div>
+    <a class="xp-pill" asp-controller="Challenges" asp-action="Index">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z" /><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3" /></svg>
+        LVL @Model.PlayerLevel · @Model.TotalXp XP
+    </a>
+    <div class="user-chip" id="userChip" onclick="toggleLogoutMenu()" style="cursor:pointer; position:relative;">
+        <div class="name-block">
+            <div class="name">@Model.UserName</div>
+            <div class="role">@Model.UserRole</div>
+        </div>
+        <div class="user-avatar">@Initials(Model.UserName)<span class="dot"></span></div>
+        <div class="logout-dropdown" id="logoutDropdown">
+            <form method="post" asp-controller="Account" asp-action="Logout">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    Sign out
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .logout-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        z-index: 999;
+        min-width: 140px;
+        overflow: hidden;
+    }
+
+        .logout-dropdown.open {
+            display: block;
+        }
+
+    .logout-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 10px 16px;
+        background: var(--card);
+        border: none;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s;
+    }
+
+        .logout-btn:hover {
+            background: var(--hover);
+        }
+</style>
+<script>
+    function toggleLogoutMenu() {
+        document.getElementById('logoutDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function (e) {
+        var chip = document.getElementById('userChip');
+        if (chip && !chip.contains(e.target)) {
+            document.getElementById('logoutDropdown').classList.remove('open');
+        }
+    });
+</script>

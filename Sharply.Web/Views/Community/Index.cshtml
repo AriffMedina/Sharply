@@ -18,54 +18,12 @@
 </head>
 
 <div class="app-shell">
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
-            Sharply
-        </div>
-        <ul class="sidebar-nav">
-            <li>
-                <a asp-controller="Home" asp-action="Index">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Skills" asp-action="Index">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
-                    Skills
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Challenges" asp-action="Index">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z" /><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3" /></svg>
-                    Challenges
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Community" asp-action="Index" class="active">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
-                    Community
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Settings" asp-action="Index">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-                    Settings
-                </a>
-            </li>
-        </ul>
-    </aside>
+    @await Component.InvokeAsync("AppSidebar", new { active = "Community" })
 
-    <main class="main">
-        <div class="section-header">
-            <div>
-                <div class="section-title-row">
-                    <span class="section-title">Community</span>
-                </div>
-                <div class="section-subtitle">Practice together with your squad and climb the leaderboard.</div>
-            </div>
-        </div>
+    <main class="main community-page">
+        @await Component.InvokeAsync("AppTopbar", new { showSearch = false })
+
+    <div>
 
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
@@ -74,124 +32,299 @@
 
         @if (!Model.HasGroup)
         {
-            <div class="community-onboarding">
-                <div class="card community-card">
+            <div class="community-hero">
+                <h1 class="community-hero-title">Learn better, <span>together.</span></h1>
+                <p class="community-hero-subtitle">Squads keep you motivated, challenge you, and help you keep your skills sharp.</p>
+
+                <div class="community-features">
+                    <div class="community-feature">
+                        <div class="community-feature-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
+                        </div>
+                        <div class="community-feature-title">Practice as a team</div>
+                        <div class="community-feature-text">Share sessions, resources and tips with your squad.</div>
+                    </div>
+                    <div class="community-feature">
+                        <div class="community-feature-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" /></svg>
+                        </div>
+                        <div class="community-feature-title">Climb the ranking</div>
+                        <div class="community-feature-text">Earn XP together and compete to be the top squad.</div>
+                    </div>
+                    <div class="community-feature">
+                        <div class="community-feature-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r="0.5" fill="currentColor" /></svg>
+                        </div>
+                        <div class="community-feature-title">Stay consistent</div>
+                        <div class="community-feature-text">Group commitment keeps you from giving up.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-orbit">
+                <div class="orbit-avatar orbit-avatar--1 orbit-avatar--violet">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></svg>
+                </div>
+                <div class="orbit-avatar orbit-avatar--2 orbit-avatar--amber">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></svg>
+                </div>
+                <div class="orbit-avatar orbit-avatar--3 orbit-avatar--green">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></svg>
+                </div>
+                <div class="orbit-avatar orbit-avatar--4 orbit-avatar--sky">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></svg>
+                </div>
+
+                <div class="orbit-card">
+                    <div class="orbit-card-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
+                    </div>
+                    <div class="orbit-card-text">Thousands of people are already learning together.</div>
+                    <div class="orbit-card-stack">
+                        <span class="orbit-chip orbit-chip--1"></span>
+                        <span class="orbit-chip orbit-chip--2"></span>
+                        <span class="orbit-chip orbit-chip--3"></span>
+                        <span class="orbit-card-count">+1.2K</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-cta">
+                <h2 class="community-cta-title">Ready to join?</h2>
+                <p class="community-cta-subtitle">Create your own squad or join an existing one, and start growing with others.</p>
+
+                <div class="community-cta-actions">
+                    <button type="button" class="btn-primary community-cta-btn" data-modal-open="modal-create">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><path d="M19 8v6M22 11h-6" /></svg>
+                        <span>
+                            <span class="community-cta-btn-title">Create a squad</span>
+                            <span class="community-cta-btn-hint">Bring your team together</span>
+                        </span>
+                    </button>
+                    <button type="button" class="btn-secondary-green community-cta-btn" data-modal-open="modal-join">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><path d="M16 11h6M19 8l3 3-3 3" /></svg>
+                        <span>
+                            <span class="community-cta-btn-title">Join a squad</span>
+                            <span class="community-cta-btn-hint">Find your group</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="community-footnote">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" /></svg>
+                <span>From study groups to coding squads, there's a place for every kind of learner.</span>
+                <partial name="_OwlMascot" />
+            </div>
+
+            <div class="modal-overlay @(Model.ErrorSource == "create" ? "open" : "")" id="modal-create">
+                <div class="modal-box">
+                    <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+                    <div class="community-card-icon community-card-icon--violet">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><path d="M19 8v6M22 11h-6" /></svg>
+                    </div>
                     <div class="form-section-title">Create a squad</div>
+                    <div class="field-hint community-card-hint">Bring your team together.</div>
                     <form method="post" asp-controller="Community" asp-action="Create">
                         @Html.AntiForgeryToken()
                         <div class="field-group">
                             <label class="field-label">Squad name</label>
-                            <input class="field-input" type="text" name="groupName" placeholder="e.g. Frontend Warriors" required />
+                            <input class="field-input" type="text" name="groupName" placeholder="e.g. Frontend Warriors" required autofocus />
                         </div>
                         <button class="btn-primary" type="submit">Create squad</button>
                     </form>
                 </div>
+            </div>
 
-                <div class="card community-card">
+            <div class="modal-overlay @(Model.ErrorSource == "join" ? "open" : "")" id="modal-join">
+                <div class="modal-box">
+                    <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+                    <div class="community-card-icon community-card-icon--green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><path d="M16 11h6M19 8l3 3-3 3" /></svg>
+                    </div>
                     <div class="form-section-title">Join with an invite code</div>
+                    <div class="field-hint community-card-hint">Find your squad.</div>
                     <form method="post" asp-controller="Community" asp-action="Join">
                         @Html.AntiForgeryToken()
                         <div class="field-group">
                             <label class="field-label">Invite code</label>
-                            <input class="field-input" type="text" name="inviteCode" placeholder="e.g. AB3XQZ9K" required />
+                            <input class="field-input" type="text" name="inviteCode" placeholder="e.g. AB3XQZ9K" required autofocus />
                         </div>
-                        <button class="btn-primary" type="submit">Join squad</button>
+                        <button class="btn-secondary-green" type="submit">Join squad</button>
                     </form>
                 </div>
             </div>
         }
         else
         {
-            <div class="card community-card">
-                <div class="community-group-header">
-                    <div>
-                        <div class="community-group-name">@Model.GroupName</div>
-                        <div class="community-invite">
-                            Invite code: <span class="community-invite-code">@Model.InviteCode</span>
+            <div class="card community-group-banner">
+                <div class="community-group-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
+                </div>
+
+                <div class="community-group-banner-info">
+                    <div class="community-group-name">@Model.GroupName</div>
+
+                    <div class="community-group-stats">
+                        <div class="community-stat">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3-3.5 3.5zm-2 6.5l-3.5-3.5" /></svg>
+                            <div>
+                                <div class="community-stat-label">Invite code</div>
+                                <div class="community-stat-value community-invite-code">@Model.InviteCode</div>
+                            </div>
+                        </div>
+                        <div class="community-stat">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
+                            <div>
+                                <div class="community-stat-label">Members</div>
+                                <div class="community-stat-value">@Model.MemberCount</div>
+                            </div>
+                        </div>
+                        <div class="community-stat">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+                            <div>
+                                <div class="community-stat-label">Created</div>
+                                <div class="community-stat-value">@Model.CreatedAt.ToString("MMM d, yyyy")</div>
+                            </div>
                         </div>
                     </div>
-                    <form method="post" asp-controller="Community" asp-action="Leave"
-                          onsubmit="return confirm('@(Model.IsOwner ? "Salir como dueño borra el grupo entero para todos. ¿Continuar?" : "¿Salir del grupo?")')">
-                        @Html.AntiForgeryToken()
-                        <button class="btn-ghost" type="submit">@(Model.IsOwner ? "Delete squad" : "Leave squad")</button>
-                    </form>
                 </div>
+
+                <form method="post" asp-controller="Community" asp-action="Leave"
+                      onsubmit="return confirm('@(Model.IsOwner ? "Salir como dueño borra el grupo entero para todos. ¿Continuar?" : "¿Salir del grupo?")')">
+                    @Html.AntiForgeryToken()
+                    <button class="btn-ghost" type="submit">@(Model.IsOwner ? "Delete squad" : "Leave squad")</button>
+                </form>
             </div>
 
-            <div class="card community-card">
-                <div class="community-tabs">
-                    <button class="community-tab active" type="button" data-tab="weekly">This week</button>
-                    <button class="community-tab" type="button" data-tab="alltime">All-time</button>
-                </div>
-
-                <div class="community-leaderboard" id="tab-weekly">
-                    @foreach (var row in Model.WeeklyLeaderboard)
-                    {
-                        <div class="leaderboard-row-full">
-                            <div class="leaderboard-avatar">@Initials(row.Name)</div>
-                            <div class="leaderboard-info">
-                                <div class="leaderboard-name">@row.Name</div>
-                                <div class="leaderboard-sub">@row.Streak day streak · @row.MissionsCompleted missions</div>
-                            </div>
-                            <div class="leaderboard-value">@row.Xp XP</div>
-                        </div>
-                    }
-                </div>
-
-                <div class="community-leaderboard" id="tab-alltime" style="display:none;">
-                    @foreach (var row in Model.AllTimeLeaderboard)
-                    {
-                        <div class="leaderboard-row-full">
-                            <div class="leaderboard-avatar">@Initials(row.Name)</div>
-                            <div class="leaderboard-info">
-                                <div class="leaderboard-name">@row.Name</div>
-                                <div class="leaderboard-sub">@row.Streak day streak · @row.MissionsCompleted missions</div>
-                            </div>
-                            <div class="leaderboard-value">@row.Xp XP</div>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            @if (Model.IsOwner)
-            {
+            <div class="community-panel-grid">
                 <div class="card community-card">
-                    <div class="form-section-title">Squad skills</div>
-                    <div class="community-group-skills">
+                    <div class="community-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9.5 8.5 3 9l5 4.5L6.5 20 12 16.5 17.5 20 16 13.5l5-4.5-6.5-.5z" /></svg>
+                        Leaderboard
+                    </div>
+                    <div class="community-tabs">
+                        <button class="community-tab active" type="button" data-tab="weekly">This week</button>
+                        <button class="community-tab" type="button" data-tab="alltime">All-time</button>
+                    </div>
+
+                    <div class="community-leaderboard" id="tab-weekly">
+                        @{ var rank = 1; }
+                        @foreach (var row in Model.WeeklyLeaderboard)
+                        {
+                            <div class="leaderboard-row-full">
+                                <div class="leaderboard-rank leaderboard-rank--@(rank <= 3 ? rank.ToString() : "other")">@rank</div>
+                                <div class="leaderboard-avatar">@Initials(row.Name)</div>
+                                <div class="leaderboard-info">
+                                    <div class="leaderboard-name">@row.Name</div>
+                                    <div class="leaderboard-sub">@row.Streak day streak · @row.MissionsCompleted missions</div>
+                                </div>
+                                <div class="leaderboard-value">@row.Xp XP</div>
+                            </div>
+                            rank++;
+                        }
+                    </div>
+
+                    <div class="community-leaderboard" id="tab-alltime" style="display:none;">
+                        @{ rank = 1; }
+                        @foreach (var row in Model.AllTimeLeaderboard)
+                        {
+                            <div class="leaderboard-row-full">
+                                <div class="leaderboard-rank leaderboard-rank--@(rank <= 3 ? rank.ToString() : "other")">@rank</div>
+                                <div class="leaderboard-avatar">@Initials(row.Name)</div>
+                                <div class="leaderboard-info">
+                                    <div class="leaderboard-name">@row.Name</div>
+                                    <div class="leaderboard-sub">@row.Streak day streak · @row.MissionsCompleted missions</div>
+                                </div>
+                                <div class="leaderboard-value">@row.Xp XP</div>
+                            </div>
+                            rank++;
+                        }
+                    </div>
+                </div>
+
+                <div class="card community-card">
+                    <div class="community-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21l7.78-7.55 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                        Squad skills
+                    </div>
+
+                    @if (Model.IsOwner)
+                    {
+                        <form method="post" asp-controller="Community" asp-action="AddGroupSkill" class="community-add-skill-form">
+                            @Html.AntiForgeryToken()
+                            <input class="field-input" type="text" name="name" placeholder="Skill name" required />
+                            <select class="field-input" name="level">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate" selected>Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                            <select class="field-input" name="priority">
+                                <option value="Low">Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                            <button class="btn-primary" type="submit">Add to squad</button>
+                        </form>
+                    }
+
+                    <div class="community-skill-list">
                         @foreach (var gs in Model.GroupSkills)
                         {
-                            <span class="badge medium">@gs.Name · @gs.Level</span>
+                            <div class="community-skill-row">
+                                <div class="community-skill-icon">@gs.Name.Substring(0, 1).ToUpper()</div>
+                                <div class="community-skill-info">
+                                    <div class="community-skill-name">@gs.Name</div>
+                                    <div class="community-skill-level">@gs.Level</div>
+                                </div>
+                                <span class="badge @gs.Priority.ToLower()">@gs.Priority</span>
+                            </div>
                         }
                         @if (Model.GroupSkills.Count == 0)
                         {
-                            <span class="field-hint">No squad skills yet — add one below.</span>
+                            <span class="field-hint">No squad skills yet — add one above.</span>
                         }
                     </div>
 
-                    <form method="post" asp-controller="Community" asp-action="AddGroupSkill" class="community-add-skill-form">
-                        @Html.AntiForgeryToken()
-                        <input class="field-input" type="text" name="name" placeholder="Skill name" required />
-                        <select class="field-input" name="level">
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate" selected>Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                        </select>
-                        <select class="field-input" name="priority">
-                            <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
-                            <option value="High">High</option>
-                        </select>
-                        <button class="btn-primary" type="submit">Add to squad</button>
-                    </form>
-                    <div class="field-hint">This gets added to every current member's Skills, each with their own retention curve.</div>
+                    @if (Model.GroupSkills.Count > 0)
+                    {
+                        <div class="community-sync-note">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" /></svg>
+                            <span>These skills sync to every member — each one's progress feeds the squad's progress.</span>
+                        </div>
+                    }
                 </div>
-            }
+            </div>
         }
+
+    </div>
     </main>
 </div>
 
 @section Scripts {
     <script>
+        document.querySelectorAll('[data-modal-open]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var modal = document.getElementById(btn.dataset.modalOpen);
+                if (modal) modal.classList.add('open');
+            });
+        });
+        document.querySelectorAll('[data-modal-close]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                btn.closest('.modal-overlay').classList.remove('open');
+            });
+        });
+        document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) overlay.classList.remove('open');
+            });
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.open').forEach(function (o) { o.classList.remove('open'); });
+            }
+        });
+
         document.querySelectorAll('.community-tab').forEach(function (tab) {
             tab.addEventListener('click', function () {
                 document.querySelectorAll('.community-tab').forEach(function (t) { t.classList.remove('active'); });

@@ -61,6 +61,7 @@ namespace Sharply.Web.Controllers
                 {
                     Title = m.Title,
                     Description = m.Description,
+                    Type = m.Type.ToString(),
                     XpReward = m.XpReward,
                     Progress = progress,
                     Target = m.Target,

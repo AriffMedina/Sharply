@@ -51,6 +51,7 @@ namespace Sharply.Tests
             private readonly Dictionary<int, int> _streaksByUserId;
             public FakeStreakService(Dictionary<int, int> streaksByUserId) => _streaksByUserId = streaksByUserId;
             public Task<int> GetCurrentStreakAsync(int userId) => Task.FromResult(_streaksByUserId.GetValueOrDefault(userId));
+            public Task<int> GetBestStreakAsync(int userId) => Task.FromResult(_streaksByUserId.GetValueOrDefault(userId));
         }
 
         [Fact]

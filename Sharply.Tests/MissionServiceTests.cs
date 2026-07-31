@@ -47,6 +47,7 @@ namespace Sharply.Tests
             private readonly int _streak;
             public FakeStreakService(int streak) => _streak = streak;
             public Task<int> GetCurrentStreakAsync(int userId) => Task.FromResult(_streak);
+            public Task<int> GetBestStreakAsync(int userId) => Task.FromResult(_streak);
         }
 
         private class FakeUserRepository : IUserRepository

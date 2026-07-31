@@ -74,9 +74,18 @@
                     <label class="field-label" style="margin-bottom:0;">Current Level</label>
                     <span class="mastery-value" id="levelValueLabel">Intermediate</span>
                 </div>
-                <!-- Esta rueda representa el NIVEL elegido para la skill, no la retención actual (esa se ve en el dashboard y decae con el tiempo). Son métricas distintas a propósito. -->
-                <input class="mastery-slider" type="range" min="0" max="2" step="1" name="Level" id="levelSlider" value="@((int)Model.Level)" />
-                <div class="level-ticks"><span>Beginner</span><span>Intermediate</span><span>Advanced</span></div>
+                <!-- Este control representa el NIVEL elegido para la skill, no la retención actual (esa se ve en el dashboard y decae con el tiempo). Son métricas distintas a propósito. -->
+                <div class="level-options" id="levelOptions">
+                    <label class="level-pill" data-level="0">
+                        <input type="radio" name="Level" value="0" @(((int)Model.Level) == 0 ? "checked" : "") />Beginner
+                    </label>
+                    <label class="level-pill" data-level="1">
+                        <input type="radio" name="Level" value="1" @(((int)Model.Level) == 1 ? "checked" : "") />Intermediate
+                    </label>
+                    <label class="level-pill" data-level="2">
+                        <input type="radio" name="Level" value="2" @(((int)Model.Level) == 2 ? "checked" : "") />Advanced
+                    </label>
+                </div>
                 <div class="field-hint">Choose where you're starting from. This shapes how fast it fades without practice.</div>
             </div>
         </form>
@@ -129,13 +138,13 @@
     <script>
         (function () {
         var nameInput = document.getElementById('skillName');
-        var slider = document.getElementById('levelSlider');
         var levelLabel = document.getElementById('levelValueLabel');
         var previewName = document.getElementById('previewName');
         var previewRing = document.getElementById('previewRing');
         var previewRingValue = document.getElementById('previewRingValue');
         var previewBadge = document.getElementById('previewPriorityBadge');
         var priorityPills = document.querySelectorAll('.priority-pill');
+        var levelPills = document.querySelectorAll('.level-pill');
         var circumference = 2 * Math.PI * 26;
 
         var levels = [
@@ -144,8 +153,7 @@
         { name: 'Advanced', fill: 1.0, cls: 'sharp' }
         ];
 
-        function updateRing() {
-        var index = parseInt(slider.value, 10) || 0;
+        function updateRing(index) {
         var level = levels[index];
         var offset = circumference * (1 - level.fill);
 
@@ -173,6 +181,12 @@
         previewBadge.classList.add(priority);
         }
 
+        function updateLevelPills(index) {
+        levelPills.forEach(function (pill) {
+        pill.classList.toggle('selected', parseInt(pill.dataset.level, 10) === index);
+        });
+        }
+
         priorityPills.forEach(function (pill) {
         pill.addEventListener('click', function () {
         pill.querySelector('input').checked = true;
@@ -180,14 +194,26 @@
         });
         });
 
-        slider.addEventListener('input', updateRing);
+        levelPills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+        pill.querySelector('input').checked = true;
+        var index = parseInt(pill.dataset.level, 10);
+        updateLevelPills(index);
+        updateRing(index);
+        });
+        });
+
         nameInput.addEventListener('input', updateName);
 
         // Defaults on load
         var checkedPill = document.querySelector('.priority-pill input:checked');
         var initialPriority = checkedPill ? checkedPill.value.toLowerCase() : 'medium';
         updatePriority(initialPriority);
-        updateRing();
+
+        var checkedLevelInput = document.querySelector('.level-pill input:checked');
+        var initialLevelIndex = checkedLevelInput ? parseInt(checkedLevelInput.value, 10) : 1;
+        updateLevelPills(initialLevelIndex);
+        updateRing(initialLevelIndex);
         updateName();
         })();
     </script>

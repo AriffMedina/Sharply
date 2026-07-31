@@ -88,5 +88,35 @@ namespace Sharply.Tests
 
             Assert.Equal(0, streak);
         }
+
+        [Fact]
+        public async Task GetBestStreakAsync_WithLongerStreakInThePast_ReturnsThePastStreak()
+        {
+            var today = DateTime.UtcNow.Date;
+            var logs = new[]
+            {
+                LogOn(today),
+                // racha vieja de 4 días, más larga que la racha actual de 1 día
+                LogOn(today.AddDays(-10)),
+                LogOn(today.AddDays(-11)),
+                LogOn(today.AddDays(-12)),
+                LogOn(today.AddDays(-13)),
+            };
+            var service = new StreakService(new FakeSkillLogRepository(logs));
+
+            var best = await service.GetBestStreakAsync(userId: 1);
+
+            Assert.Equal(4, best);
+        }
+
+        [Fact]
+        public async Task GetBestStreakAsync_WithNoLogs_ReturnsZero()
+        {
+            var service = new StreakService(new FakeSkillLogRepository(Array.Empty<SkillLog>()));
+
+            var best = await service.GetBestStreakAsync(userId: 1);
+
+            Assert.Equal(0, best);
+        }
     }
 }

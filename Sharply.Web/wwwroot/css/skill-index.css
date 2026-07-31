@@ -54,23 +54,24 @@
 }
 
 .btn-sl--edit {
-    background: rgba(255,255,255,.06);
+    background: var(--gray-soft);
     color: var(--text-primary);
-    border-color: rgba(255,255,255,.1);
+    border-color: var(--card-border);
 }
 
     .btn-sl--edit:hover {
-        background: rgba(255,255,255,.11);
+        background: var(--card-border);
     }
 
 .btn-sl--del {
-    background: rgba(241,99,95,.12);
-    color: #fca5a5;
-    border-color: rgba(241,99,95,.28);
+    background: var(--red-soft);
+    color: var(--red);
+    border-color: transparent;
 }
 
     .btn-sl--del:hover {
-        background: rgba(241,99,95,.22);
+        background: var(--red-soft);
+        filter: brightness(0.95);
     }
 
 .skill-toast {
@@ -85,15 +86,15 @@
 }
 
 .skill-toast--ok {
-    background: rgba(52,211,153,.1);
-    border: 1px solid rgba(52,211,153,.25);
-    color: #34d399;
+    background: var(--green-soft);
+    border: 1px solid var(--green-soft);
+    color: var(--green);
 }
 
 .skill-toast--err {
-    background: rgba(241,99,95,.1);
-    border: 1px solid rgba(241,99,95,.25);
-    color: #fca5a5;
+    background: var(--red-soft);
+    border: 1px solid var(--red-soft);
+    color: var(--red);
 }
 
 .skills-empty {

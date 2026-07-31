@@ -9,6 +9,10 @@
     background: radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.10), transparent 45%), radial-gradient(circle at 85% 85%, rgba(52, 211, 153, 0.08), transparent 45%), var(--bg);
 }
 
+.auth-body--flat {
+    background: var(--bg);
+}
+
 .auth-shell {
     width: 100%;
     max-width: 420px;

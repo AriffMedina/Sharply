@@ -38,5 +38,36 @@ namespace Sharply.Application.Services
 
             return streak;
         }
+
+        public async Task<int> GetBestStreakAsync(int userId)
+        {
+            var logs = await _skillLogRepository.GetByUserIdAsync(userId);
+
+            var practiceDates = logs
+                .Select(l => l.PracticedAt.Date)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
+
+            if (practiceDates.Count == 0)
+                return 0;
+
+            var best = 1;
+            var current = 1;
+            for (var i = 1; i < practiceDates.Count; i++)
+            {
+                if (practiceDates[i] == practiceDates[i - 1].AddDays(1))
+                {
+                    current++;
+                    best = Math.Max(best, current);
+                }
+                else
+                {
+                    current = 1;
+                }
+            }
+
+            return best;
+        }
     }
 }

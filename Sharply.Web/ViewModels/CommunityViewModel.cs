@@ -21,11 +21,14 @@
         public bool IsOwner { get; set; }
         public string GroupName { get; set; } = string.Empty;
         public string InviteCode { get; set; } = string.Empty;
+        public int MemberCount { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public List<LeaderboardRowViewModel> WeeklyLeaderboard { get; set; } = new();
         public List<LeaderboardRowViewModel> AllTimeLeaderboard { get; set; } = new();
         public List<GroupSkillRowViewModel> GroupSkills { get; set; } = new();
 
         public string? ErrorMessage { get; set; }
+        public string? ErrorSource { get; set; }
     }
 }

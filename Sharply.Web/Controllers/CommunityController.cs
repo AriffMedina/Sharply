@@ -31,7 +31,8 @@ namespace Sharply.Web.Controllers
             var model = new CommunityViewModel
             {
                 HasGroup = group is not null,
-                ErrorMessage = TempData["CommunityError"] as string
+                ErrorMessage = TempData["CommunityError"] as string,
+                ErrorSource = TempData["CommunityErrorSource"] as string
             };
 
             if (group is not null)
@@ -39,6 +40,8 @@ namespace Sharply.Web.Controllers
                 model.IsOwner = group.OwnerUserId == CurrentUserId;
                 model.GroupName = group.Name;
                 model.InviteCode = group.InviteCode;
+                model.CreatedAt = group.CreatedAt;
+                model.MemberCount = (await _groupService.GetMembersAsync(group.Id)).Count();
 
                 var weekly = await _leaderboardService.GetWeeklyLeaderboardAsync(group.Id);
                 var allTime = await _leaderboardService.GetAllTimeLeaderboardAsync(group.Id);
@@ -69,6 +72,7 @@ namespace Sharply.Web.Controllers
                 catch (InvalidOperationException ex)
                 {
                     TempData["CommunityError"] = ex.Message;
+                    TempData["CommunityErrorSource"] = "create";
                 }
             }
 
@@ -82,7 +86,10 @@ namespace Sharply.Web.Controllers
             {
                 var joined = await _groupService.JoinGroupAsync(CurrentUserId, inviteCode);
                 if (!joined)
+                {
                     TempData["CommunityError"] = "Ese código no es válido, o ya pertenecés a un grupo.";
+                    TempData["CommunityErrorSource"] = "join";
+                }
             }
 
             return RedirectToAction("Index");

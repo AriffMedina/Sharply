@@ -18,22 +18,19 @@ namespace Sharply.Web.Controllers
         private readonly ISkillLogRepository _skillLogRepository;
         private readonly ISkillDecayService _skillDecayService;
         private readonly IStreakService _streakService;
-        private readonly IUserRepository _userRepository;
 
         public HomeController(
             IEmailService emailService,
             ISkillRepository skillRepository,
             ISkillLogRepository skillLogRepository,
             ISkillDecayService skillDecayService,
-            IStreakService streakService,
-            IUserRepository userRepository)
+            IStreakService streakService)
         {
             _emailService = emailService;
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
             _skillDecayService = skillDecayService;
             _streakService = streakService;
-            _userRepository = userRepository;
         }
 
         [AllowAnonymous]
@@ -98,9 +95,6 @@ namespace Sharply.Web.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult About() => View();
-
-        [AllowAnonymous]
         public IActionResult Privacy() => View();
 
         [AllowAnonymous]
@@ -111,8 +105,8 @@ namespace Sharply.Web.Controllers
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
 
-        // XP lineal por nivel de jugador: 100 XP = 1 nivel, sin techo.
-        private const int XpPerLevel = 100;
+        // Hitos de racha para la card "Next Goal": el próximo no alcanzado marca el objetivo.
+        private static readonly int[] StreakMilestones = { 3, 7, 14, 30, 60, 100 };
 
         private async Task<DashboardViewModel> BuildDashboardAsync()
         {
@@ -120,37 +114,37 @@ namespace Sharply.Web.Controllers
             var skills = (await _skillRepository.GetByUserIdAsync(userId))
                 .Where(s => s.GroupId is null)
                 .ToList();
-            var user = await _userRepository.GetByIdAsync(userId);
-            var totalXp = user?.TotalXp ?? 0;
+            var logs = (await _skillLogRepository.GetByUserIdAsync(userId)).ToList();
 
             var cards = new List<SkillCardViewModel>();
             foreach (var skill in skills)
                 cards.Add(await MapSkillToCardAsync(skill));
 
-            var (weeklyPoints, weeklyStartLabel, weeklyEndLabel) = await BuildWeeklyActivityAsync(userId);
+            var streakDays = await _streakService.GetCurrentStreakAsync(userId);
+            var bestStreakDays = await _streakService.GetBestStreakAsync(userId);
+            var weekly = BuildWeeklyActivity(logs);
+            var nextGoalTarget = StreakMilestones.FirstOrDefault(m => m > streakDays);
+            if (nextGoalTarget == 0)
+                nextGoalTarget = streakDays + 50 - (streakDays % 50);
 
             return new DashboardViewModel
             {
                 UserName = User.FindFirstValue(ClaimTypes.Name) ?? "Learner",
-                UserRole = (user?.Role ?? Domain.Enums.UserRole.Member).ToString(),
-                StreakDays = await _streakService.GetCurrentStreakAsync(userId),
-                TotalXp = totalXp,
-                PlayerLevel = (totalXp / XpPerLevel) + 1,
                 AvgRetention = cards.Count > 0 ? Math.Round(cards.Average(c => c.RetentionPercent), 1) : 0,
-                WeeklyActivityPoints = weeklyPoints,
-                WeeklyActivityStartLabel = weeklyStartLabel,
-                WeeklyActivityEndLabel = weeklyEndLabel,
-                Skills = cards,
-                // MostConsistent/TopContributors siguen siendo datos de muestra a propósito:
-                // el leaderboard real de grupo llega en la Fase 3 (Squads).
-                MostConsistent = SampleMostConsistent(),
-                TopContributors = SampleTopContributors()
+                WeeklyActivityPoints = weekly.Points,
+                WeeklyActivityStartLabel = weekly.StartLabel,
+                WeeklyActivityEndLabel = weekly.EndLabel,
+                WeeklyInsightMessage = weekly.InsightMessage,
+                NextGoalTarget = nextGoalTarget,
+                NextGoalProgress = Math.Min(streakDays, nextGoalTarget),
+                NextGoalLabel = $"Practice {nextGoalTarget} days in a row",
+                Achievements = BuildAchievements(logs.Count > 0, bestStreakDays),
+                Skills = cards
             };
         }
 
-        private async Task<(string Points, string StartLabel, string EndLabel)> BuildWeeklyActivityAsync(int userId)
+        private static (string Points, string StartLabel, string EndLabel, string InsightMessage) BuildWeeklyActivity(List<SkillLog> logs)
         {
-            var logs = (await _skillLogRepository.GetByUserIdAsync(userId)).ToList();
             var today = DateTime.UtcNow.Date;
 
             var dailyCounts = Enumerable.Range(0, 7)
@@ -171,20 +165,27 @@ namespace Sharply.Web.Controllers
             var startLabel = today.AddDays(-6).ToString("ddd", CultureInfo.InvariantCulture).ToUpperInvariant();
             var endLabel = today.ToString("ddd", CultureInfo.InvariantCulture).ToUpperInvariant();
 
-            return (points, startLabel, endLabel);
+            var thisWeekTotal = dailyCounts.Sum();
+            var lastWeekTotal = Enumerable.Range(0, 7)
+                .Select(offset => today.AddDays(offset - 13))
+                .Sum(day => logs.Count(l => l.PracticedAt.Date == day));
+
+            var insightMessage = thisWeekTotal == 0
+                ? "No activity yet this week. Log a session to get going."
+                : thisWeekTotal > lastWeekTotal
+                    ? "Great job! You practiced more this week."
+                    : thisWeekTotal == lastWeekTotal
+                        ? "Steady pace — same activity as last week."
+                        : "A bit quieter than last week. Let's pick it back up.";
+
+            return (points, startLabel, endLabel, insightMessage);
         }
 
-        private static List<LeaderboardEntryViewModel> SampleMostConsistent() => new()
+        private static List<AchievementViewModel> BuildAchievements(bool hasPracticed, int bestStreakDays) => new()
         {
-            new() { Name = "Alex Rivera", Value = "242d" },
-            new() { Name = "Sarah Chen", Value = "189d" },
-            new() { Name = "Marcus Volt", Value = "156d" },
-        };
-
-        private static List<LeaderboardEntryViewModel> SampleTopContributors() => new()
-        {
-            new() { Name = "Elena Krups", Value = "12k" },
-            new() { Name = "James Wilson", Value = "9.4k" },
+            new() { Title = "Getting Started", Description = "Log your first practice session", Icon = "star", Unlocked = hasPracticed },
+            new() { Title = "Consistent", Description = "Practice 3 days in a row", Icon = "shield", Unlocked = bestStreakDays >= 3 },
+            new() { Title = "Dedicated", Description = "Reach a 7 day streak", Icon = "heart", Unlocked = bestStreakDays >= 7 },
         };
 
         private async Task<SkillCardViewModel> MapSkillToCardAsync(Skill skill)
