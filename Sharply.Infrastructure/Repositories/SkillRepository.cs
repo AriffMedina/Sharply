@@ -34,6 +34,13 @@ public class SkillRepository : ISkillRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Skill>> GetByGroupIdAsync(int groupId)
+    {
+        return await _context.Skills
+            .Where(s => s.GroupId == groupId)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(Skill skill)
     {
         await _context.Skills.AddAsync(skill);

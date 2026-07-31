@@ -1,0 +1,134 @@
+/* ===== Sharply — Community page ===== */
+
+.community-card {
+    padding: 24px;
+    margin-bottom: 20px;
+    max-width: 720px;
+}
+
+.community-onboarding {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+    .community-onboarding .community-card {
+        flex: 1;
+        min-width: 260px;
+    }
+
+.community-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.community-group-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.community-invite {
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+}
+
+.community-invite-code {
+    font-weight: 700;
+    color: var(--accent-blue);
+    letter-spacing: 0.05em;
+}
+
+.community-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.community-tab {
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-secondary);
+    border-radius: var(--radius-pill);
+    padding: 7px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .community-tab.active {
+        background: var(--accent-blue);
+        border-color: var(--accent-blue);
+        color: #fff;
+    }
+
+.community-leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.leaderboard-row-full {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+    .leaderboard-row-full:last-child {
+        border-bottom: none;
+    }
+
+    .leaderboard-row-full .leaderboard-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .leaderboard-row-full .leaderboard-name {
+        font-size: 0.9rem;
+    }
+
+    .leaderboard-row-full .leaderboard-value {
+        font-size: 0.9rem;
+    }
+
+.community-group-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.community-add-skill-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+    .community-add-skill-form .field-input {
+        width: auto;
+        flex: 1;
+        min-width: 140px;
+    }
+
+.skill-toast {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .75rem 1rem;
+    border-radius: 10px;
+    font-size: .84rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.skill-toast--err {
+    background: rgba(241, 99, 95, .1);
+    border: 1px solid rgba(241, 99, 95, .25);
+    color: #fca5a5;
+}

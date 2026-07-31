@@ -13,6 +13,9 @@ namespace Sharply.Infrastructure.Data
         public DbSet<SkillLog> SkillLogs => Set<SkillLog>();
         public DbSet<Mission> Missions => Set<Mission>();
         public DbSet<MissionCompletion> MissionCompletions => Set<MissionCompletion>();
+        public DbSet<Group> Groups => Set<Group>();
+        public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
+        public DbSet<GroupSkill> GroupSkills => Set<GroupSkill>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -97,6 +100,53 @@ namespace Sharply.Infrastructure.Data
                     Period = MissionPeriod.Weekly
                 }
             );
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<string>()
+                .HasDefaultValue(UserRole.Member);
+
+            modelBuilder.Entity<Group>()
+                .HasOne(g => g.Owner)
+                .WithMany()
+                .HasForeignKey(g => g.OwnerUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Group>()
+                .HasIndex(g => g.InviteCode)
+                .IsUnique();
+
+            modelBuilder.Entity<GroupMember>()
+                .HasOne(m => m.Group)
+                .WithMany()
+                .HasForeignKey(m => m.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupMember>()
+                .HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupSkill>()
+                .HasOne(gs => gs.Group)
+                .WithMany()
+                .HasForeignKey(gs => gs.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupSkill>()
+                .Property(gs => gs.Level)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<GroupSkill>()
+                .Property(gs => gs.Priority)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Skill>()
+                .HasOne<Group>()
+                .WithMany()
+                .HasForeignKey(s => s.GroupId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

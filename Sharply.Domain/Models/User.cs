@@ -18,6 +18,7 @@ namespace Sharply.Domain.Models
         public DecayStrategyType DecayStrategy { get; set; } = DecayStrategyType.Ebbinghaus;
 
         public int TotalXp { get; set; }
+        public UserRole Role { get; set; } = UserRole.Member;
 
         public ICollection<Skill> Skills { get; set; } = new List<Skill>();
     }

@@ -37,6 +37,11 @@ builder.Services.AddScoped<IDecayStrategyResolver, DecayStrategyResolver>();
 builder.Services.AddScoped<IMissionRepository, MissionRepository>();
 builder.Services.AddScoped<IMissionCompletionRepository, MissionCompletionRepository>();
 builder.Services.AddScoped<IMissionService, MissionService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupMemberRepository, GroupMemberRepository>();
+builder.Services.AddScoped<IGroupSkillRepository, GroupSkillRepository>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddHostedService<DecayWorker>();
 
 var app = builder.Build();

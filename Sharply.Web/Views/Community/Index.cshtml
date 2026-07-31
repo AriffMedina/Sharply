@@ -1,0 +1,205 @@
+@model Sharply.Web.ViewModels.CommunityViewModel
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Community";
+}
+
+@functions {
+    string Initials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2 ? $"{parts[0][0]}{parts[1][0]}" : name.Substring(0, Math.Min(2, name.Length));
+    }
+}
+
+<head>
+    <link href="~/css/skill-form.css" rel="stylesheet" />
+    <link href="~/css/community.css" rel="stylesheet" />
+</head>
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+            Sharply
+        </div>
+        <ul class="sidebar-nav">
+            <li>
+                <a asp-controller="Home" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Skills" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                    Skills
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Challenges" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z" /><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3" /></svg>
+                    Challenges
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Community" asp-action="Index" class="active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /><circle cx="17" cy="7" r="3" /><path d="M22 21v-2a3.5 3.5 0 0 0-2.5-3.36" /></svg>
+                    Community
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Settings" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+                    Settings
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="section-header">
+            <div>
+                <div class="section-title-row">
+                    <span class="section-title">Community</span>
+                </div>
+                <div class="section-subtitle">Practice together with your squad and climb the leaderboard.</div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="skill-toast skill-toast--err">@Model.ErrorMessage</div>
+        }
+
+        @if (!Model.HasGroup)
+        {
+            <div class="community-onboarding">
+                <div class="card community-card">
+                    <div class="form-section-title">Create a squad</div>
+                    <form method="post" asp-controller="Community" asp-action="Create">
+                        @Html.AntiForgeryToken()
+                        <div class="field-group">
+                            <label class="field-label">Squad name</label>
+                            <input class="field-input" type="text" name="groupName" placeholder="e.g. Frontend Warriors" required />
+                        </div>
+                        <button class="btn-primary" type="submit">Create squad</button>
+                    </form>
+                </div>
+
+                <div class="card community-card">
+                    <div class="form-section-title">Join with an invite code</div>
+                    <form method="post" asp-controller="Community" asp-action="Join">
+                        @Html.AntiForgeryToken()
+                        <div class="field-group">
+                            <label class="field-label">Invite code</label>
+                            <input class="field-input" type="text" name="inviteCode" placeholder="e.g. AB3XQZ9K" required />
+                        </div>
+                        <button class="btn-primary" type="submit">Join squad</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card community-card">
+                <div class="community-group-header">
+                    <div>
+                        <div class="community-group-name">@Model.GroupName</div>
+                        <div class="community-invite">
+                            Invite code: <span class="community-invite-code">@Model.InviteCode</span>
+                        </div>
+                    </div>
+                    <form method="post" asp-controller="Community" asp-action="Leave"
+                          onsubmit="return confirm('@(Model.IsOwner ? "Salir como dueño borra el grupo entero para todos. ¿Continuar?" : "¿Salir del grupo?")')">
+                        @Html.AntiForgeryToken()
+                        <button class="btn-ghost" type="submit">@(Model.IsOwner ? "Delete squad" : "Leave squad")</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card community-card">
+                <div class="community-tabs">
+                    <button class="community-tab active" type="button" data-tab="weekly">This week</button>
+                    <button class="community-tab" type="button" data-tab="alltime">All-time</button>
+                </div>
+
+                <div class="community-leaderboard" id="tab-weekly">
+                    @foreach (var row in Model.WeeklyLeaderboard)
+                    {
+                        <div class="leaderboard-row-full">
+                            <div class="leaderboard-avatar">@Initials(row.Name)</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">@row.Name</div>
+                                <div class="leaderboard-sub">@row.Streak day streak · @row.MissionsCompleted missions</div>
+                            </div>
+                            <div class="leaderboard-value">@row.Xp XP</div>
+                        </div>
+                    }
+                </div>
+
+                <div class="community-leaderboard" id="tab-alltime" style="display:none;">
+                    @foreach (var row in Model.AllTimeLeaderboard)
+                    {
+                        <div class="leaderboard-row-full">
+                            <div class="leaderboard-avatar">@Initials(row.Name)</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">@row.Name</div>
+                                <div class="leaderboard-sub">@row.Streak day streak · @row.MissionsCompleted missions</div>
+                            </div>
+                            <div class="leaderboard-value">@row.Xp XP</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.IsOwner)
+            {
+                <div class="card community-card">
+                    <div class="form-section-title">Squad skills</div>
+                    <div class="community-group-skills">
+                        @foreach (var gs in Model.GroupSkills)
+                        {
+                            <span class="badge medium">@gs.Name · @gs.Level</span>
+                        }
+                        @if (Model.GroupSkills.Count == 0)
+                        {
+                            <span class="field-hint">No squad skills yet — add one below.</span>
+                        }
+                    </div>
+
+                    <form method="post" asp-controller="Community" asp-action="AddGroupSkill" class="community-add-skill-form">
+                        @Html.AntiForgeryToken()
+                        <input class="field-input" type="text" name="name" placeholder="Skill name" required />
+                        <select class="field-input" name="level">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate" selected>Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                        <select class="field-input" name="priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                        <button class="btn-primary" type="submit">Add to squad</button>
+                    </form>
+                    <div class="field-hint">This gets added to every current member's Skills, each with their own retention curve.</div>
+                </div>
+            }
+        }
+    </main>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.community-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.community-tab').forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+
+                document.getElementById('tab-weekly').style.display = tab.dataset.tab === 'weekly' ? '' : 'none';
+                document.getElementById('tab-alltime').style.display = tab.dataset.tab === 'alltime' ? '' : 'none';
+            });
+        });
+    </script>
+}

@@ -130,6 +130,7 @@ namespace Sharply.Web.Controllers
             return new DashboardViewModel
             {
                 UserName = User.FindFirstValue(ClaimTypes.Name) ?? "Learner",
+                UserRole = (user?.Role ?? Domain.Enums.UserRole.Member).ToString(),
                 StreakDays = await _streakService.GetCurrentStreakAsync(userId),
                 TotalXp = totalXp,
                 PlayerLevel = (totalXp / XpPerLevel) + 1,

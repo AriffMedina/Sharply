@@ -18,6 +18,9 @@ namespace Sharply.Domain.Models
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
+        // Fase 3: si viene de un grupo (instanciada desde un GroupSkill), null = skill personal.
+        public int? GroupId { get; set; }
+
         public ICollection<SkillLog> Logs { get; set; } = new List<SkillLog>();
     }
 }
