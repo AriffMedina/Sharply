@@ -1,0 +1,118 @@
+@model Sharply.Web.ViewModels.SettingsViewModel
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Settings";
+}
+
+<head>
+    <link href="~/css/skill-form.css" rel="stylesheet" />
+    <link href="~/css/settings.css" rel="stylesheet" />
+</head>
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+            Sharply
+        </div>
+        <ul class="sidebar-nav">
+            <li>
+                <a asp-controller="Home" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Skills" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                    Skills
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Settings" asp-action="Index" class="active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+                    Settings
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="section-header">
+            <div>
+                <div class="section-title-row">
+                    <span class="section-title">Settings</span>
+                </div>
+                <div class="section-subtitle">Manage your profile and decay notification preferences.</div>
+            </div>
+        </div>
+
+        @if (TempData["SettingsSaved"] != null)
+        {
+            <div class="skill-toast skill-toast--ok">Settings saved.</div>
+        }
+
+        <div class="card settings-card">
+            <form method="post" asp-controller="Settings" asp-action="Index">
+                @Html.AntiForgeryToken()
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="auth-error-summary">Please check the fields below.</div>
+                }
+
+                <div class="field-group">
+                    <label class="field-label" asp-for="Name">Name</label>
+                    <input class="field-input" asp-for="Name" autocomplete="off" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" asp-for="Email">Email</label>
+                    <input class="field-input" asp-for="Email" type="email" autocomplete="off" />
+                    <span asp-validation-for="Email" class="field-error"></span>
+                </div>
+
+                <div class="form-section-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 6-10 7L2 6" /></svg>
+                    Decay Notifications
+                </div>
+
+                <div class="field-group settings-checkbox-row">
+                    <label>
+                        <input type="checkbox" asp-for="DecayEmailEnabled" />
+                        Email me when a skill is at risk of decaying
+                    </label>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" asp-for="DecayRetentionThreshold">Alert Threshold (retention, 0–1)</label>
+                    <input class="field-input settings-threshold-input" asp-for="DecayRetentionThreshold" type="number" step="0.05" min="0" max="1" />
+                    <div class="field-hint">A skill is flagged "at risk" once its retention drops below this value.</div>
+                    <span asp-validation-for="DecayRetentionThreshold" class="field-error"></span>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" asp-for="DecayStrategy">Decay Strategy</label>
+                    <select class="field-input" asp-for="DecayStrategy">
+                        <option value="Ebbinghaus">Ebbinghaus (exponential)</option>
+                        <option value="Linear">Linear</option>
+                    </select>
+                    <div class="field-hint">Ebbinghaus mimics natural forgetting; Linear decays at a constant daily rate.</div>
+                </div>
+
+                <button class="btn-primary" type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="card settings-card settings-danger-zone">
+            <div class="form-section-title settings-danger-title">Danger Zone</div>
+            <p class="field-hint settings-danger-text">Deleting your account permanently removes all your skills and practice history. This can't be undone.</p>
+            <form method="post" asp-controller="Settings" asp-action="DeleteAccount"
+                  onsubmit="return confirm('Are you sure you want to permanently delete your account? This cannot be undone.')">
+                @Html.AntiForgeryToken()
+                <button class="settings-delete-btn" type="submit">Delete My Account</button>
+            </form>
+        </div>
+    </main>
+</div>

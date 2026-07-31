@@ -17,7 +17,7 @@ builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
 
 // Servicios de aplicación (núcleo)
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
-builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
+builder.Services.AddScoped<IDecayStrategyResolver, DecayStrategyResolver>();
 builder.Services.AddScoped<IMissionService, MissionService>();
 
 // Controllers + Swagger

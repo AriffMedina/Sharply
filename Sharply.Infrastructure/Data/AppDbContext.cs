@@ -30,6 +30,19 @@ namespace Sharply.Infrastructure.Data
             modelBuilder.Entity<Skill>()
                 .Property(s => s.Priority)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.DecayEmailEnabled)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.DecayRetentionThreshold)
+                .HasDefaultValue(0.5);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.DecayStrategy)
+                .HasConversion<string>()
+                .HasDefaultValue(Sharply.Domain.Enums.DecayStrategyType.Ebbinghaus);
         }
     }
 }

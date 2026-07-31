@@ -59,7 +59,10 @@ namespace Sharply.Infrastructure.Jobs
 
             foreach (var user in users)
             {
-                var skillsAtRisk = await decayService.GetSkillsAtRiskAsync(user.Id);
+                if (!user.DecayEmailEnabled)
+                    continue;
+
+                var skillsAtRisk = await decayService.GetSkillsAtRiskAsync(user.Id, user.DecayRetentionThreshold);
 
                 foreach (var skill in skillsAtRisk)
                 {
