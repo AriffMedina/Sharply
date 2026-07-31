@@ -209,6 +209,39 @@ button {
         font-size: 0.88rem;
     }
 
+    .search-box input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 0.88rem;
+    }
+
+        .search-box input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+.skills-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 2rem;
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+    .skills-empty svg {
+        opacity: .3;
+    }
+
+    .skills-empty p {
+        margin: 0;
+        font-size: .95rem;
+    }
+
 .streak-pill {
     display: flex;
     align-items: center;

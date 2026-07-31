@@ -112,7 +112,7 @@
         <div class="topbar">
             <div class="search-box">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.35-4.35" /></svg>
-                <span>Search your skills...</span>
+                <input type="text" id="skillSearchInput" placeholder="Search your skills..." autocomplete="off" />
             </div>
             <div class="streak-pill">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-4 5-4 9a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 15.5C5 9 12 7 12 2z" /></svg>
@@ -121,7 +121,6 @@
             <div class="user-chip" id="userChip" onclick="toggleLogoutMenu()" style="cursor:pointer; position:relative;">
                 <div class="name-block">
                     <div class="name">@Model.UserName</div>
-                    <div class="role">@Model.UserRole</div>
                 </div>
                 <div class="user-avatar">@Initials(Model.UserName)<span class="dot"></span></div>
                 <div class="logout-dropdown" id="logoutDropdown">
@@ -145,7 +144,6 @@
                     </span>
                 </div>
                 <div class="stat-value">@Model.AvgRetention.ToString("0.0")%</div>
-                <div class="stat-delta"><span class="up">+@Model.RetentionDeltaVsLastWeek.ToString("0.0")%</span> vs last week</div>
             </div>
 
             <div class="card stat-card">
@@ -154,9 +152,9 @@
                 </div>
                 <div class="chart-wrap">
                     <svg viewBox="0 0 220 70" width="100%" height="64" preserveAspectRatio="none">
-                        <polyline points="0,45 30,50 60,30 90,38 120,18 150,22 190,10 220,14" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        <polyline points="@Model.WeeklyActivityPoints" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <div class="chart-axis"><span>MON</span><span>SUN</span></div>
+                    <div class="chart-axis"><span>@Model.WeeklyActivityStartLabel</span><span>@Model.WeeklyActivityEndLabel</span></div>
                 </div>
             </div>
 
@@ -164,10 +162,10 @@
                 <div class="promo-eyebrow">GROWTH TRACKING</div>
                 <div class="promo-title">Historical Insights</div>
                 <div class="promo-text">Analyze your learning patterns over the last 90 days.</div>
-                <button class="promo-btn" type="button">
+                <a class="promo-btn" asp-controller="Home" asp-action="History">
                     View History
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6" /></svg>
-                </button>
+                </a>
             </div>
         </div>
 
@@ -187,7 +185,20 @@
             </div>
         </div>
 
-        <div class="skills-grid">
+        @if (Model.Skills.Count == 0)
+        {
+            <div class="card skills-empty">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                <p>You have no skills logged yet.</p>
+                <a class="btn-primary" asp-controller="Skills" asp-action="Create">Add my first skill</a>
+            </div>
+        }
+        else
+        {
+        <div class="skills-grid" id="skillsGrid">
+            <div class="card skills-empty" id="skillsSearchEmpty" style="display:none;">
+                <p>No skills match your search.</p>
+            </div>
             @foreach (var skill in Model.Skills)
             {
                 var masteryClass = MasteryClass(skill.Level);
@@ -195,7 +206,7 @@
                 var circumference = 2 * Math.PI * 26;
                 var offset = circumference * (1 - skill.RetentionPercent / 100.0);
 
-                <div class="card skill-card">
+                <div class="card skill-card" data-skill-name="@skill.Name.ToLowerInvariant()">
                     <div class="skill-top">
                         <div>
                             <div class="skill-name">@skill.Name</div>
@@ -243,6 +254,7 @@
                 </div>
             }
         </div>
+        }
 
         <div class="card tip-banner">
             <div class="tip-icon">
@@ -329,5 +341,27 @@
                 document.getElementById('logoutDropdown').classList.remove('open');
             }
         });
+
+        (function () {
+            var searchInput = document.getElementById('skillSearchInput');
+            var grid = document.getElementById('skillsGrid');
+            if (!searchInput || !grid) return;
+
+            var cards = Array.prototype.slice.call(grid.querySelectorAll('.skill-card'));
+            var emptyState = document.getElementById('skillsSearchEmpty');
+
+            searchInput.addEventListener('input', function () {
+                var query = searchInput.value.trim().toLowerCase();
+                var visibleCount = 0;
+
+                cards.forEach(function (card) {
+                    var matches = card.dataset.skillName.indexOf(query) !== -1;
+                    card.style.display = matches ? '' : 'none';
+                    if (matches) visibleCount++;
+                });
+
+                emptyState.style.display = visibleCount === 0 ? '' : 'none';
+            });
+        })();
     </script>
 }

@@ -34,6 +34,14 @@ public class SkillLogRepository : ISkillLogRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<SkillLog>> GetByUserIdAsync(int userId)
+    {
+        return await _context.SkillLogs
+            .Include(l => l.Skill)
+            .Where(l => l.Skill.UserId == userId)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(SkillLog log)
     {
         await _context.SkillLogs.AddAsync(log);

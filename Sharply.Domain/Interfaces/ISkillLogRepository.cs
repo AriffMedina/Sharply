@@ -10,6 +10,7 @@ namespace Sharply.Domain.Interfaces
         Task<IEnumerable<SkillLog>> GetAllAsync();
         Task<SkillLog?> GetByIdAsync(int id);
         Task<IEnumerable<SkillLog>> GetBySkillIdAsync(int skillId);
+        Task<IEnumerable<SkillLog>> GetByUserIdAsync(int userId);
         Task AddAsync(SkillLog log);
     }
 }

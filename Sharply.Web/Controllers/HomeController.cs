@@ -5,6 +5,7 @@ using Sharply.Domain.Models;
 using Sharply.Web.Models;
 using Sharply.Web.ViewModels;
 using System.Diagnostics;
+using System.Globalization;
 using System.Security.Claims;
 
 namespace Sharply.Web.Controllers
@@ -16,17 +17,20 @@ namespace Sharply.Web.Controllers
         private readonly ISkillRepository _skillRepository;
         private readonly ISkillLogRepository _skillLogRepository;
         private readonly ISkillDecayService _skillDecayService;
+        private readonly IStreakService _streakService;
 
         public HomeController(
             IEmailService emailService,
             ISkillRepository skillRepository,
             ISkillLogRepository skillLogRepository,
-            ISkillDecayService skillDecayService)
+            ISkillDecayService skillDecayService,
+            IStreakService streakService)
         {
             _emailService = emailService;
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
             _skillDecayService = skillDecayService;
+            _streakService = streakService;
         }
 
         [AllowAnonymous]
@@ -74,6 +78,22 @@ namespace Sharply.Web.Controllers
             return View("Index", model);
         }
 
+        public async Task<IActionResult> History()
+        {
+            var entries = (await _skillLogRepository.GetByUserIdAsync(CurrentUserId))
+                .OrderByDescending(l => l.PracticedAt)
+                .Select(l => new HistoryEntryViewModel
+                {
+                    SkillName = l.Skill.Name,
+                    PracticedAt = l.PracticedAt,
+                    Notes = l.Notes
+                })
+                .ToList();
+
+            ViewData["Title"] = "History";
+            return View(entries);
+        }
+
         [AllowAnonymous]
         public IActionResult About() => View();
 
@@ -90,24 +110,69 @@ namespace Sharply.Web.Controllers
 
         private async Task<DashboardViewModel> BuildDashboardAsync()
         {
-            var model = BuildSampleDashboard();
-            model.UserName = User.FindFirstValue(ClaimTypes.Name) ?? model.UserName;
+            var userId = CurrentUserId;
+            var skills = (await _skillRepository.GetByUserIdAsync(userId)).ToList();
 
-            var skills = (await _skillRepository.GetByUserIdAsync(CurrentUserId)).ToList();
+            var cards = new List<SkillCardViewModel>();
+            foreach (var skill in skills)
+                cards.Add(await MapSkillToCardAsync(skill));
 
-            if (skills.Count > 0)
+            var (weeklyPoints, weeklyStartLabel, weeklyEndLabel) = await BuildWeeklyActivityAsync(userId);
+
+            return new DashboardViewModel
             {
-                var cards = new List<SkillCardViewModel>();
-                foreach (var skill in skills)
-                    cards.Add(await MapSkillToCardAsync(skill));
-
-                model.Skills = cards;
-                model.AvgRetention = Math.Round(cards.Average(c => c.RetentionPercent), 1);
-                model.RetentionDeltaVsLastWeek = 0;
-            }
-
-            return model;
+                UserName = User.FindFirstValue(ClaimTypes.Name) ?? "Learner",
+                StreakDays = await _streakService.GetCurrentStreakAsync(userId),
+                AvgRetention = cards.Count > 0 ? Math.Round(cards.Average(c => c.RetentionPercent), 1) : 0,
+                WeeklyActivityPoints = weeklyPoints,
+                WeeklyActivityStartLabel = weeklyStartLabel,
+                WeeklyActivityEndLabel = weeklyEndLabel,
+                Skills = cards,
+                // MostConsistent/TopContributors siguen siendo datos de muestra a propósito:
+                // el leaderboard real de grupo llega en la Fase 3 (Squads).
+                MostConsistent = SampleMostConsistent(),
+                TopContributors = SampleTopContributors()
+            };
         }
+
+        private async Task<(string Points, string StartLabel, string EndLabel)> BuildWeeklyActivityAsync(int userId)
+        {
+            var logs = (await _skillLogRepository.GetByUserIdAsync(userId)).ToList();
+            var today = DateTime.UtcNow.Date;
+
+            var dailyCounts = Enumerable.Range(0, 7)
+                .Select(offset => today.AddDays(offset - 6))
+                .Select(day => logs.Count(l => l.PracticedAt.Date == day))
+                .ToList();
+
+            var maxCount = Math.Max(dailyCounts.Max(), 1);
+            const double width = 220, topMargin = 6, baseline = 60;
+
+            var points = string.Join(" ", dailyCounts.Select((count, index) =>
+            {
+                var x = index * (width / (dailyCounts.Count - 1));
+                var y = baseline - (count / (double)maxCount) * (baseline - topMargin);
+                return $"{x.ToString("F1", CultureInfo.InvariantCulture)},{y.ToString("F1", CultureInfo.InvariantCulture)}";
+            }));
+
+            var startLabel = today.AddDays(-6).ToString("ddd", CultureInfo.InvariantCulture).ToUpperInvariant();
+            var endLabel = today.ToString("ddd", CultureInfo.InvariantCulture).ToUpperInvariant();
+
+            return (points, startLabel, endLabel);
+        }
+
+        private static List<LeaderboardEntryViewModel> SampleMostConsistent() => new()
+        {
+            new() { Name = "Alex Rivera", Value = "242d" },
+            new() { Name = "Sarah Chen", Value = "189d" },
+            new() { Name = "Marcus Volt", Value = "156d" },
+        };
+
+        private static List<LeaderboardEntryViewModel> SampleTopContributors() => new()
+        {
+            new() { Name = "Elena Krups", Value = "12k" },
+            new() { Name = "James Wilson", Value = "9.4k" },
+        };
 
         private async Task<SkillCardViewModel> MapSkillToCardAsync(Skill skill)
         {
@@ -134,42 +199,5 @@ namespace Sharply.Web.Controllers
             };
         }
 
-        private static DashboardViewModel BuildSampleDashboard()
-        {
-            return new DashboardViewModel
-            {
-                UserName = "Jordan Hayes",
-                UserRole = "Pro Learner",
-                StreakDays = 14,
-                AvgRetention = 78.4,
-                RetentionDeltaVsLastWeek = 2.4,
-                Skills = new List<SkillCardViewModel>
-                {
-                    new() { Id = 0, Name = "React Fundamentals", Priority = "High", Level = "Advanced", RetentionPercent = 94, DaysAgo = 1,
-                        Note = "Strong grasp on hooks and reconciliation. Need to review Server Components." },
-                    new() { Id = 0, Name = "UI/UX Micro-Interactions", Priority = "Medium", Level = "Intermediate", RetentionPercent = 72, DaysAgo = 4,
-                        Note = "Developing intuition for easing curves and visual feedback loops." },
-                    new() { Id = 0, Name = "System Design", Priority = "High", Level = "Beginner", RetentionPercent = 45, DaysAgo = 12,
-                        Note = "Knowledge of load balancing and sharding is fading. Schedule a deep dive." },
-                    new() { Id = 0, Name = "TypeScript Advanced", Priority = "Low", Level = "Intermediate", RetentionPercent = 88, DaysAgo = 2,
-                        Note = "Excellent at generics and utility types. Solid production performance." },
-                    new() { Id = 0, Name = "Database Optimization", Priority = "Medium", Level = "Intermediate", RetentionPercent = 61, DaysAgo = 5,
-                        Note = "Indexing strategies are clear; query profiling needs more hands-on work." },
-                    new() { Id = 0, Name = "Motion Design", Priority = "Low", Level = "Beginner", RetentionPercent = 32, DaysAgo = 21,
-                        Note = "Basic keyframing understood. Advanced physics-based motion is currently rusty." },
-                },
-                MostConsistent = new List<LeaderboardEntryViewModel>
-                {
-                    new() { Name = "Alex Rivera", Value = "242d" },
-                    new() { Name = "Sarah Chen", Value = "189d" },
-                    new() { Name = "Marcus Volt", Value = "156d" },
-                },
-                TopContributors = new List<LeaderboardEntryViewModel>
-                {
-                    new() { Name = "Elena Krups", Value = "12k" },
-                    new() { Name = "James Wilson", Value = "9.4k" },
-                }
-            };
-        }
     }
 }

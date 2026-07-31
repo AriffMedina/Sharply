@@ -32,6 +32,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
+builder.Services.AddScoped<IStreakService, StreakService>();
 builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
 builder.Services.AddHostedService<DecayWorker>();
 

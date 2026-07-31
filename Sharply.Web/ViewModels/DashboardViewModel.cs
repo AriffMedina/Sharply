@@ -21,12 +21,14 @@ namespace Sharply.Web.ViewModels
 
     public class DashboardViewModel
     {
-        public string UserName { get; set; } = "Jordan Hayes";
-        public string UserRole { get; set; } = "Pro Learner";
-        public int StreakDays { get; set; } = 14;
+        public string UserName { get; set; } = string.Empty;
+        public int StreakDays { get; set; }
 
-        public double AvgRetention { get; set; } = 78.4;
-        public double RetentionDeltaVsLastWeek { get; set; } = 2.4;
+        public double AvgRetention { get; set; }
+
+        public string WeeklyActivityPoints { get; set; } = string.Empty;
+        public string WeeklyActivityStartLabel { get; set; } = string.Empty;
+        public string WeeklyActivityEndLabel { get; set; } = string.Empty;
 
         public List<SkillCardViewModel> Skills { get; set; } = new();
         public List<LeaderboardEntryViewModel> MostConsistent { get; set; } = new();
