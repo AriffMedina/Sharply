@@ -117,7 +117,9 @@ namespace Sharply.Web.Controllers
         private async Task<DashboardViewModel> BuildDashboardAsync()
         {
             var userId = CurrentUserId;
-            var skills = (await _skillRepository.GetByUserIdAsync(userId)).ToList();
+            var skills = (await _skillRepository.GetByUserIdAsync(userId))
+                .Where(s => s.GroupId is null)
+                .ToList();
             var user = await _userRepository.GetByIdAsync(userId);
             var totalXp = user?.TotalXp ?? 0;
 

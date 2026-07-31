@@ -32,7 +32,8 @@ namespace Sharply.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var skills = await _skillRepository.GetByUserIdAsync(CurrentUserId);
+            var skills = (await _skillRepository.GetByUserIdAsync(CurrentUserId))
+                .Where(s => s.GroupId is null);
             var cards = new List<SkillCardViewModel>();
             foreach (var skill in skills)
                 cards.Add(await MapSkillToCardAsync(skill));
