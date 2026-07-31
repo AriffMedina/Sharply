@@ -1,0 +1,123 @@
+/* ===== Sharply Landing (pública, pre-login) — reutiliza tokens de Dashboard.css ===== */
+
+.landing-shell {
+    width: 100%;
+    max-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+}
+
+.landing-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+}
+
+.landing-hero {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+}
+
+.landing-copy {
+    flex: 1 1 380px;
+    min-width: 300px;
+}
+
+.landing-title {
+    font-size: 2.6rem;
+    line-height: 1.15;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 18px;
+}
+
+.landing-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    margin: 0 0 32px;
+    max-width: 480px;
+}
+
+.landing-ctas {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.landing-cta-primary,
+.landing-cta-secondary {
+    padding: 13px 26px;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+}
+
+.landing-cta-primary {
+    background: var(--accent-blue);
+    color: #fff;
+}
+
+    .landing-cta-primary:hover {
+        background: var(--accent-blue-hover);
+    }
+
+.landing-cta-secondary {
+    background: transparent;
+    border-color: var(--card-border);
+    color: var(--text-primary);
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+    .landing-cta-secondary:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+
+.landing-visual {
+    flex: 1 1 380px;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+}
+
+.landing-visual-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.landing-visual-caption {
+    margin: 14px 0 0;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+}
+
+@media (max-width: 640px) {
+    .landing-title {
+        font-size: 2rem;
+    }
+
+    .landing-ctas {
+        flex-direction: column;
+    }
+
+    .landing-cta-primary,
+    .landing-cta-secondary {
+        width: 100%;
+    }
+}

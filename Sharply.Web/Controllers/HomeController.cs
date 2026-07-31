@@ -29,8 +29,15 @@ namespace Sharply.Web.Controllers
             _skillDecayService = skillDecayService;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                ViewData["Title"] = "Sharply";
+                return View("Landing");
+            }
+
             ViewData["Title"] = "Dashboard";
             var model = await BuildDashboardAsync();
             return View(model);

@@ -1,0 +1,48 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Sharply — No dejes que tus skills se oxiden";
+}
+
+<head>
+    <link href="~/css/landing.css" rel="stylesheet" />
+</head>
+
+<div class="landing-shell">
+
+    <div class="landing-header">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+        Sharply
+    </div>
+
+    <div class="landing-hero">
+        <div class="landing-copy">
+            <h1 class="landing-title">No dejes que tus skills se oxiden</h1>
+            <p class="landing-subtitle">
+                Sharply sigue la curva del olvido de Ebbinghaus para decirte exactamente qué repasar y cuándo,
+                antes de que se te escape de la memoria.
+            </p>
+            <div class="landing-ctas">
+                <a class="landing-cta-primary" asp-controller="Account" asp-action="Register">Crear cuenta</a>
+                <a class="landing-cta-secondary" asp-controller="Account" asp-action="Login">Ya tengo cuenta</a>
+            </div>
+        </div>
+
+        <div class="landing-visual">
+            <!-- LANDING-HERO-VISUAL: reemplazar por mascota/ilustración en el rediseño de GUI post-Fase-4 -->
+            <div class="landing-visual-panel">
+                <svg viewBox="0 0 360 190" width="100%" height="auto">
+                    <line x1="10" y1="150" x2="350" y2="150" stroke="var(--text-tertiary)" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.5" />
+
+                    <path d="M20,50 C50,80 70,120 90,160 L100,30 C130,60 150,100 170,140 L180,20 C210,45 230,85 250,120 L260,10 C290,30 310,55 340,80"
+                          fill="none" stroke="var(--accent-blue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+
+                    <circle cx="100" cy="30" r="7" fill="var(--green)" />
+                    <circle cx="180" cy="20" r="7" fill="var(--green)" />
+                    <circle cx="260" cy="10" r="7" fill="var(--green)" />
+                </svg>
+                <p class="landing-visual-caption">Repasás justo a tiempo → la retención sube cada vez más alto.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
