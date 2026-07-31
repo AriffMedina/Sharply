@@ -18,19 +18,22 @@ namespace Sharply.Web.Controllers
         private readonly ISkillLogRepository _skillLogRepository;
         private readonly ISkillDecayService _skillDecayService;
         private readonly IStreakService _streakService;
+        private readonly IGroupService _groupService;
 
         public HomeController(
             IEmailService emailService,
             ISkillRepository skillRepository,
             ISkillLogRepository skillLogRepository,
             ISkillDecayService skillDecayService,
-            IStreakService streakService)
+            IStreakService streakService,
+            IGroupService groupService)
         {
             _emailService = emailService;
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
             _skillDecayService = skillDecayService;
             _streakService = streakService;
+            _groupService = groupService;
         }
 
         [AllowAnonymous]
@@ -111,14 +114,22 @@ namespace Sharply.Web.Controllers
         private async Task<DashboardViewModel> BuildDashboardAsync()
         {
             var userId = CurrentUserId;
-            var skills = (await _skillRepository.GetByUserIdAsync(userId))
-                .Where(s => s.GroupId is null)
-                .ToList();
+            var allSkills = (await _skillRepository.GetByUserIdAsync(userId)).ToList();
+            var skills = allSkills.Where(s => s.GroupId is null).ToList();
             var logs = (await _skillLogRepository.GetByUserIdAsync(userId)).ToList();
 
             var cards = new List<SkillCardViewModel>();
             foreach (var skill in skills)
                 cards.Add(await MapSkillToCardAsync(skill));
+
+            var group = await _groupService.GetGroupForUserAsync(userId);
+            var groupCards = new List<SkillCardViewModel>();
+            if (group is not null)
+            {
+                var groupSkills = allSkills.Where(s => s.GroupId == group.Id);
+                foreach (var skill in groupSkills)
+                    groupCards.Add(await MapSkillToCardAsync(skill));
+            }
 
             var streakDays = await _streakService.GetCurrentStreakAsync(userId);
             var bestStreakDays = await _streakService.GetBestStreakAsync(userId);
@@ -139,7 +150,9 @@ namespace Sharply.Web.Controllers
                 NextGoalProgress = Math.Min(streakDays, nextGoalTarget),
                 NextGoalLabel = $"Practice {nextGoalTarget} days in a row",
                 Achievements = BuildAchievements(logs.Count > 0, bestStreakDays),
-                Skills = cards
+                Skills = cards,
+                GroupName = group?.Name,
+                GroupSkills = groupCards
             };
         }
 

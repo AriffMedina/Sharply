@@ -47,6 +47,9 @@ namespace Sharply.Web.ViewModels
 
         public List<SkillCardViewModel> Skills { get; set; } = new();
 
+        public string? GroupName { get; set; }
+        public List<SkillCardViewModel> GroupSkills { get; set; } = new();
+
         public string? EmailStatusMessage { get; set; }
         public bool EmailSendSuccess { get; set; }
         public string? LastTestEmail { get; set; }

@@ -1,0 +1,71 @@
+@model Sharply.Web.ViewModels.SkillCardViewModel
+
+@functions {
+    string MasteryClass(string level) => level.Trim().ToLowerInvariant() switch
+    {
+        "advanced" => "sharp",
+        "beginner" => "rusty",
+        _ => "intermediate"
+    };
+
+    string PriorityClass(string priority) => priority.Trim().ToLowerInvariant() switch
+    {
+        "high" => "high",
+        "low" => "low",
+        _ => "medium"
+    };
+}
+
+@{
+    var masteryClass = MasteryClass(Model.Level);
+    var priorityClass = PriorityClass(Model.Priority);
+    var circumference = 2 * Math.PI * 26;
+    var offset = circumference * (1 - Model.RetentionPercent / 100.0);
+}
+
+<div class="card skill-card" data-skill-name="@Model.Name.ToLowerInvariant()">
+    <div class="skill-top">
+        <div>
+            <div class="skill-name">@Model.Name</div>
+            <span class="badge @priorityClass">@Model.Priority Priority</span>
+        </div>
+        <div class="ring-wrap">
+            <svg viewBox="0 0 60 60">
+                <circle class="ring-track" cx="30" cy="30" r="26" />
+                <circle class="ring-progress @masteryClass" cx="30" cy="30" r="26"
+                        stroke-dasharray="@circumference.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                        stroke-dashoffset="@offset.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+            </svg>
+            <div class="ring-value @masteryClass">@Model.RetentionPercent%</div>
+        </div>
+    </div>
+
+    <div class="skill-meta">
+        <span class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+            @Model.DaysAgo days ago
+        </span>
+        <span class="meta-item mastery-label @masteryClass">
+            @(masteryClass == "rusty" ? "↘" : "↗") @Model.Level
+        </span>
+    </div>
+
+    <p class="skill-note">@Model.Note</p>
+
+    @if (Model.Id > 0)
+    {
+        <form method="post" asp-controller="Skills" asp-action="LogPractice" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <button class="btn-practice" type="submit">
+                Practice
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
+        </form>
+    }
+    else
+    {
+        <button class="btn-practice" type="button" disabled style="opacity:.4;cursor:default;">
+            Log Practice
+        </button>
+    }
+</div>
