@@ -7,7 +7,7 @@ namespace Sharply.Web.ViewModels
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Priority { get; set; } = "Medium";
-        public string MasteryLevel { get; set; } = "Intermediate";
+        public string Level { get; set; } = "Intermediate";
         public int RetentionPercent { get; set; }
         public int DaysAgo { get; set; }
         public string Note { get; set; } = string.Empty;

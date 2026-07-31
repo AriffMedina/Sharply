@@ -9,7 +9,7 @@ namespace Sharply.Domain.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public MasteryLevel MasteryLevel { get; set; } = MasteryLevel.Intermediate;
+        public Level Level { get; set; } = Level.Intermediate;
         public SkillPriority Priority { get; set; } = SkillPriority.Medium;
         public DateTime LastPracticedAt { get; set; } = DateTime.UtcNow;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

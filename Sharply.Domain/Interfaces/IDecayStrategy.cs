@@ -4,6 +4,6 @@ namespace Sharply.Domain.Interfaces
 {
     public interface IDecayStrategy
     {
-        double Calculate(double initialRetention, int daysInactive, MasteryLevel mastery, SkillPriority priority);
+        double Calculate(double initialRetention, int daysInactive, Level level, SkillPriority priority);
     }
 }

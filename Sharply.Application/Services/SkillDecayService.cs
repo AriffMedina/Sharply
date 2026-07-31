@@ -26,7 +26,7 @@ namespace Sharply.Application.Services
         public async Task<double> CalculateRetentionAsync(Skill skill)
         {
             var daysInactive = await GetDaysInactiveAsync(skill);
-            return _decayStrategy.Calculate(skill.InitialRetention, daysInactive, skill.MasteryLevel, skill.Priority);
+            return _decayStrategy.Calculate(skill.InitialRetention, daysInactive, skill.Level, skill.Priority);
         }
 
         public async Task<IEnumerable<Skill>> GetSkillsAtRiskAsync(int userId, double retentionThreshold = 0.5)

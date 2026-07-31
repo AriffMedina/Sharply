@@ -6,13 +6,13 @@ namespace Sharply.Application.Services
     /// <summary>Implementación de referencia del patrón Strategy — hoy no está registrada en ningún Program.cs.</summary>
     public class LinearDecayStrategy : IDecayStrategy
     {
-        public double Calculate(double initialRetention, int daysInactive, MasteryLevel mastery, SkillPriority priority)
+        public double Calculate(double initialRetention, int daysInactive, Level level, SkillPriority priority)
         {
-            double decayPerDay = mastery switch
+            double decayPerDay = level switch
             {
-                MasteryLevel.Sharp => 0.01,
-                MasteryLevel.Intermediate => 0.02,
-                MasteryLevel.Rusty => 0.05,
+                Level.Advanced => 0.01,
+                Level.Intermediate => 0.02,
+                Level.Beginner => 0.05,
                 _ => 0.02
             };
 

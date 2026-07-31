@@ -5,20 +5,20 @@ namespace Sharply.Application.Services
 {
     public class EbbinghausDecayStrategy : IDecayStrategy
     {
-        public double Calculate(double initialRetention, int daysInactive, MasteryLevel mastery, SkillPriority priority)
+        public double Calculate(double initialRetention, int daysInactive, Level level, SkillPriority priority)
         {
-            var stability = GetStabilityConstant(mastery, priority);
+            var stability = GetStabilityConstant(level, priority);
             var retention = initialRetention * Math.Exp(-(double)daysInactive / stability);
             return Math.Round(retention, 4);
         }
 
-        private static double GetStabilityConstant(MasteryLevel mastery, SkillPriority priority)
+        private static double GetStabilityConstant(Level level, SkillPriority priority)
         {
-            double baseStability = mastery switch
+            double baseStability = level switch
             {
-                MasteryLevel.Sharp => 60,
-                MasteryLevel.Intermediate => 30,
-                MasteryLevel.Rusty => 10,
+                Level.Advanced => 60,
+                Level.Intermediate => 30,
+                Level.Beginner => 10,
                 _ => 30
             };
 

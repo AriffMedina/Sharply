@@ -5,10 +5,10 @@
 }
 
 @functions {
-    string MasteryClass(string mastery) => mastery.Trim().ToLowerInvariant() switch
+    string MasteryClass(string level) => level.Trim().ToLowerInvariant() switch
     {
-        "sharp" => "sharp",
-        "rusty" => "rusty",
+        "advanced" => "sharp",
+        "beginner" => "rusty",
         _ => "intermediate"
     };
     string PriorityClass(string priority) => priority.Trim().ToLowerInvariant() switch
@@ -118,7 +118,7 @@
             <div class="skills-list">
                 @foreach (var skill in Model)
                 {
-                    var mc = MasteryClass(skill.MasteryLevel);
+                    var mc = MasteryClass(skill.Level);
                     var pc = PriorityClass(skill.Priority);
                     var circumference = 2 * Math.PI * 26;
                     var offset = circumference * (1 - skill.RetentionPercent / 100.0);
@@ -138,7 +138,7 @@
                             <div class="skill-name">@skill.Name</div>
                             <div class="skill-list-meta">
                                 <span class="badge @pc">@skill.Priority Priority</span>
-                                <span class="meta-item mastery-label @mc">@skill.MasteryLevel</span>
+                                <span class="meta-item mastery-label @mc">@skill.Level</span>
                                 <span class="meta-item">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
                                     @skill.DaysAgo days ago

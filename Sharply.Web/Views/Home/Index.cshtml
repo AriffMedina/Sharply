@@ -5,10 +5,10 @@
 }
 
 @functions {
-    string MasteryClass(string mastery) => mastery.Trim().ToLowerInvariant() switch
+    string MasteryClass(string level) => level.Trim().ToLowerInvariant() switch
     {
-        "sharp" => "sharp",
-        "rusty" => "rusty",
+        "advanced" => "sharp",
+        "beginner" => "rusty",
         _ => "intermediate"
     };
 
@@ -190,7 +190,7 @@
         <div class="skills-grid">
             @foreach (var skill in Model.Skills)
             {
-                var masteryClass = MasteryClass(skill.MasteryLevel);
+                var masteryClass = MasteryClass(skill.Level);
                 var priorityClass = PriorityClass(skill.Priority);
                 var circumference = 2 * Math.PI * 26;
                 var offset = circumference * (1 - skill.RetentionPercent / 100.0);
@@ -218,7 +218,7 @@
                             @skill.DaysAgo days ago
                         </span>
                         <span class="meta-item mastery-label @masteryClass">
-                            @(masteryClass == "rusty" ? "↘" : "↗") @skill.MasteryLevel
+                            @(masteryClass == "rusty" ? "↘" : "↗") @skill.Level
                         </span>
                     </div>
 
@@ -250,7 +250,7 @@
             </div>
             <div class="tip-body">
                 <div class="tip-title">Sharply Tip: Spaced Repetition</div>
-                <div class="tip-text">Focusing on your <span class="highlight">Rusty</span> skills for just 10 minutes a day can improve long-term retention by up to 40%. Consistency beats intensity.</div>
+                <div class="tip-text">Focusing on your <span class="highlight">Beginner</span> skills for just 10 minutes a day can improve long-term retention by up to 40%. Consistency beats intensity.</div>
             </div>
             <button class="tip-btn" type="button" onclick="window.location.href='@Url.Action("About", "Home")'">Learn More</button>
         </div>

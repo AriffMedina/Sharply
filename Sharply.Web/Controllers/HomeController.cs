@@ -125,7 +125,7 @@ namespace Sharply.Web.Controllers
                 Id = skill.Id,
                 Name = skill.Name,
                 Priority = skill.Priority.ToString(),
-                MasteryLevel = skill.MasteryLevel.ToString(),
+                Level = skill.Level.ToString(),
                 RetentionPercent = retentionPercent,
                 DaysAgo = daysAgo,
                 Note = string.IsNullOrWhiteSpace(latestNote)
@@ -145,17 +145,17 @@ namespace Sharply.Web.Controllers
                 RetentionDeltaVsLastWeek = 2.4,
                 Skills = new List<SkillCardViewModel>
                 {
-                    new() { Id = 0, Name = "React Fundamentals", Priority = "High", MasteryLevel = "Sharp", RetentionPercent = 94, DaysAgo = 1,
+                    new() { Id = 0, Name = "React Fundamentals", Priority = "High", Level = "Advanced", RetentionPercent = 94, DaysAgo = 1,
                         Note = "Strong grasp on hooks and reconciliation. Need to review Server Components." },
-                    new() { Id = 0, Name = "UI/UX Micro-Interactions", Priority = "Medium", MasteryLevel = "Intermediate", RetentionPercent = 72, DaysAgo = 4,
+                    new() { Id = 0, Name = "UI/UX Micro-Interactions", Priority = "Medium", Level = "Intermediate", RetentionPercent = 72, DaysAgo = 4,
                         Note = "Developing intuition for easing curves and visual feedback loops." },
-                    new() { Id = 0, Name = "System Design", Priority = "High", MasteryLevel = "Rusty", RetentionPercent = 45, DaysAgo = 12,
+                    new() { Id = 0, Name = "System Design", Priority = "High", Level = "Beginner", RetentionPercent = 45, DaysAgo = 12,
                         Note = "Knowledge of load balancing and sharding is fading. Schedule a deep dive." },
-                    new() { Id = 0, Name = "TypeScript Advanced", Priority = "Low", MasteryLevel = "Intermediate", RetentionPercent = 88, DaysAgo = 2,
+                    new() { Id = 0, Name = "TypeScript Advanced", Priority = "Low", Level = "Intermediate", RetentionPercent = 88, DaysAgo = 2,
                         Note = "Excellent at generics and utility types. Solid production performance." },
-                    new() { Id = 0, Name = "Database Optimization", Priority = "Medium", MasteryLevel = "Intermediate", RetentionPercent = 61, DaysAgo = 5,
+                    new() { Id = 0, Name = "Database Optimization", Priority = "Medium", Level = "Intermediate", RetentionPercent = 61, DaysAgo = 5,
                         Note = "Indexing strategies are clear; query profiling needs more hands-on work." },
-                    new() { Id = 0, Name = "Motion Design", Priority = "Low", MasteryLevel = "Rusty", RetentionPercent = 32, DaysAgo = 21,
+                    new() { Id = 0, Name = "Motion Design", Priority = "Low", Level = "Beginner", RetentionPercent = 32, DaysAgo = 21,
                         Note = "Basic keyframing understood. Advanced physics-based motion is currently rusty." },
                 },
                 MostConsistent = new List<LeaderboardEntryViewModel>

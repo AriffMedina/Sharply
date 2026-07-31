@@ -7,7 +7,7 @@ public class SkillResponse
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public MasteryLevel MasteryLevel { get; set; }
+    public Level Level { get; set; }
     public SkillPriority Priority { get; set; }
     public DateTime LastPracticedAt { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -25,7 +25,7 @@ public class SkillResponse
     {
         Id = s.Id,
         Name = s.Name,
-        MasteryLevel = s.MasteryLevel,
+        Level = s.Level,
         Priority = s.Priority,
         LastPracticedAt = s.LastPracticedAt,
         CreatedAt = s.CreatedAt,

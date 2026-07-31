@@ -49,7 +49,7 @@ namespace Sharply.Web.Controllers
             {
                 Name = model.Name.Trim(),
                 Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium,
-                MasteryLevel = MapMastery(model.InitialMasteryPercent),
+                Level = MapMastery(model.InitialMasteryPercent),
                 InitialRetention = model.InitialMasteryPercent / 100.0,
                 LastPracticedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
@@ -96,7 +96,7 @@ namespace Sharply.Web.Controllers
 
             skill.Name = model.Name.Trim();
             skill.Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium;
-            skill.MasteryLevel = MapMastery(model.InitialMasteryPercent);
+            skill.Level = MapMastery(model.InitialMasteryPercent);
             skill.InitialRetention = model.InitialMasteryPercent / 100.0;
             await _skillRepository.UpdateAsync(skill);
 
@@ -126,8 +126,8 @@ namespace Sharply.Web.Controllers
             skill.LastPracticedAt = DateTime.UtcNow;
             skill.InitialRetention = 1.0;
 
-            if (skill.MasteryLevel < MasteryLevel.Sharp)
-                skill.MasteryLevel++;
+            if (skill.Level < Level.Advanced)
+                skill.Level++;
 
             await _skillRepository.UpdateAsync(skill);
 
@@ -145,11 +145,11 @@ namespace Sharply.Web.Controllers
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
 
-        private static MasteryLevel MapMastery(int percent) => percent switch
+        private static Level MapMastery(int percent) => percent switch
         {
-            < 40 => MasteryLevel.Rusty,
-            < 75 => MasteryLevel.Intermediate,
-            _ => MasteryLevel.Sharp
+            < 40 => Level.Beginner,
+            < 75 => Level.Intermediate,
+            _ => Level.Advanced
         };
 
         private async Task<SkillCardViewModel> MapSkillToCardAsync(Skill skill)
@@ -164,7 +164,7 @@ namespace Sharply.Web.Controllers
                 Id = skill.Id,
                 Name = skill.Name,
                 Priority = skill.Priority.ToString(),
-                MasteryLevel = skill.MasteryLevel.ToString(),
+                Level = skill.Level.ToString(),
                 RetentionPercent = (int)Math.Round(retention * 100),
                 DaysAgo = daysAgo,
                 Note = string.IsNullOrWhiteSpace(latestNote)

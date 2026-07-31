@@ -24,7 +24,7 @@ namespace Sharply.Infrastructure.Data
                 .HasForeignKey(l => l.SkillId);
 
             modelBuilder.Entity<Skill>()
-                .Property(s => s.MasteryLevel)
+                .Property(s => s.Level)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Skill>()
