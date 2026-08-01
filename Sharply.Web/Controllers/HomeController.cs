@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sharply.Domain.Enums;
 using Sharply.Domain.Interfaces;
 using Sharply.Domain.Models;
 using Sharply.Web.Models;
@@ -67,7 +68,7 @@ namespace Sharply.Web.Controllers
 
             try
             {
-                await _emailService.SendDecayAlarmAsync(testEmail, "React Fundamentals", 12);
+                await _emailService.SendDecayAlarmAsync(testEmail, "React Fundamentals", 12, Level.Intermediate);
                 model.EmailSendSuccess = true;
                 model.EmailStatusMessage = $"Email sent to {testEmail}. Check your inbox (or spam).";
             }
@@ -222,7 +223,8 @@ namespace Sharply.Web.Controllers
                 DaysAgo = daysAgo,
                 Note = string.IsNullOrWhiteSpace(latestNote)
                     ? "No practice notes yet. Log a session to track your progress."
-                    : latestNote!
+                    : latestNote!,
+                Suggestion = skill.CurrentSuggestion
             };
         }
 

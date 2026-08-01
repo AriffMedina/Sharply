@@ -135,6 +135,8 @@ namespace Sharply.Web.Controllers
 
             skill.LastPracticedAt = DateTime.UtcNow;
             skill.InitialRetention = 1.0;
+            skill.CurrentSuggestion = null;
+            skill.SuggestionGeneratedAt = null;
 
             if (skill.Level < Level.Advanced)
                 skill.Level++;
@@ -174,7 +176,8 @@ namespace Sharply.Web.Controllers
                 DaysAgo = daysAgo,
                 Note = string.IsNullOrWhiteSpace(latestNote)
                     ? "No practice notes yet."
-                    : latestNote!
+                    : latestNote!,
+                Suggestion = skill.CurrentSuggestion
             };
         }
     }

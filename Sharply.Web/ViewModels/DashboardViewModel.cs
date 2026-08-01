@@ -11,6 +11,7 @@ namespace Sharply.Web.ViewModels
         public int RetentionPercent { get; set; }
         public int DaysAgo { get; set; }
         public string Note { get; set; } = string.Empty;
+        public string? Suggestion { get; set; }
     }
 
     public class DayActivityViewModel

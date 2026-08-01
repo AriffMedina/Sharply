@@ -837,6 +837,26 @@ button {
     min-height: 38px;
 }
 
+/* Fase 4: sugerencia de práctica generada por IA cuando la skill está en riesgo. */
+.skill-suggestion {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--amber-soft);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+    .skill-suggestion svg {
+        flex-shrink: 0;
+        color: var(--amber);
+        margin-top: 1px;
+    }
+
 /* ----- Tip banner ----- */
 .tip-banner {
     background: var(--accent-blue-soft);
