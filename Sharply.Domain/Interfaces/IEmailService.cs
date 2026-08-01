@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sharply.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,6 @@ namespace Sharply.Domain.Interfaces
 {
     public interface IEmailService
     {
-        Task SendDecayAlarmAsync(string toEmail, string skillName, int daysInactive);
+        Task SendDecayAlarmAsync(string toEmail, string skillName, int daysInactive, Level level, string? suggestion = null);
     }
 }

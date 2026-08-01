@@ -2,6 +2,7 @@
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Sharply.Domain.Enums;
 using Sharply.Domain.Interfaces;
 using Sharply.Domain.Models;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Sharply.Infrastructure.Messaging
             _config = config;
         }
 
-        public async Task SendDecayAlarmAsync(string toEmail, string skillName, int daysInactive)
+        public async Task SendDecayAlarmAsync(string toEmail, string skillName, int daysInactive, Level level, string? suggestion = null)
         {
             string senderEmail = _config["EmailSettings:SenderEmail"]
                 ?? throw new InvalidOperationException("Falta EmailSettings:SenderEmail en la configuración");
@@ -36,10 +37,22 @@ namespace Sharply.Infrastructure.Messaging
             message.To.Add(new MailboxAddress("", toEmail));
             message.Subject = $"⚠️ Alerta Sharply: Estás olvidando {skillName}";
 
+            var levelLabel = level switch
+            {
+                Level.Beginner => "Principiante",
+                Level.Advanced => "Avanzado",
+                _ => "Intermedio"
+            };
+
+            var suggestionParagraph = string.IsNullOrWhiteSpace(suggestion)
+                ? string.Empty
+                : $"\n\nSugerencia de práctica: {suggestion}";
+
             message.Body = new TextPart("plain")
             {
-                Text = $"Hola!\n\nHan pasado {daysInactive} días desde que practicaste '{skillName}'.\n" +
-                       $"Tu retención de esta habilidad está cayendo. ¡Entra a Sharply y haz un repaso rápido!\n\nSaludos,\nEl equipo de Sharply"
+                Text = $"Hola!\n\nHan pasado {daysInactive} días desde que practicaste '{skillName}' (nivel {levelLabel}).\n" +
+                       $"Tu retención de esta habilidad está cayendo. ¡Entra a Sharply y haz un repaso rápido!" +
+                       $"{suggestionParagraph}\n\nSaludos,\nEl equipo de Sharply"
             };
 
             using var client = new MailKit.Net.Smtp.SmtpClient();
@@ -62,7 +75,7 @@ namespace Sharply.Infrastructure.Messaging
         {
             var daysInactive = (System.DateTime.UtcNow - skillAtRisk.LastPracticedAt).Days;
 
-            await SendDecayAlarmAsync(user.Email, skillAtRisk.Name, daysInactive);
+            await SendDecayAlarmAsync(user.Email, skillAtRisk.Name, daysInactive, skillAtRisk.Level, skillAtRisk.CurrentSuggestion);
         }
     }
 }
