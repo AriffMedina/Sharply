@@ -21,13 +21,23 @@ public class SkillRepository : ISkillRepository
 
     public async Task<Skill?> GetByIdAsync(int id)
     {
-        return await _context.Skills.FindAsync(id);
+        return await _context.Skills
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.Id == id);
     }
 
     public async Task<IEnumerable<Skill>> GetByUserIdAsync(int userId)
     {
         return await _context.Skills
+            .Include(s => s.User)
             .Where(s => s.UserId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Skill>> GetByGroupIdAsync(int groupId)
+    {
+        return await _context.Skills
+            .Where(s => s.GroupId == groupId)
             .ToListAsync();
     }
 

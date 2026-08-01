@@ -1,0 +1,154 @@
+@model List<Sharply.Web.ViewModels.ChallengeViewModel>
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Challenges";
+}
+
+@functions {
+    string ChallengeIconClass(string type) => type switch
+    {
+        "RescueRusty" => "amber",
+        "KeepStreak" => "sky",
+        _ => "green"
+    };
+
+    string DifficultyLabel(string type) => type switch
+    {
+        "RescueRusty" => "Medium",
+        "KeepStreak" => "Hard",
+        _ => "Easy"
+    };
+}
+
+<head><link href="~/css/challenges.css" rel="stylesheet" /></head>
+
+<div class="app-shell">
+    @await Component.InvokeAsync("AppSidebar", new { active = "Challenges" })
+
+    <main class="main">
+        @await Component.InvokeAsync("AppTopbar")
+
+        <div class="section-header">
+            <div>
+                <div class="section-title-row">
+                    <span class="section-title">Challenges</span>
+                </div>
+                <div class="section-subtitle">Complete missions and earn XP while building strong habits. 🎯</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-primary">
+
+                <div class="card challenges-banner">
+                    <div class="challenges-banner-title">Level up by completing challenges!</div>
+                    <div class="challenges-banner-text">Stay consistent, push your limits and earn XP to unlock new achievements.</div>
+                    <svg class="challenges-banner-illustration" viewBox="0 0 130 100" fill="none">
+                        <rect x="30" y="70" width="70" height="14" rx="2" fill="rgba(255,255,255,0.35)" />
+                        <path d="M50 30h30v20a15 15 0 0 1-30 0V30z" fill="#fbbf24" />
+                        <path d="M50 32h-10a10 10 0 0 0 10 10z" fill="none" stroke="#fbbf24" stroke-width="3" />
+                        <path d="M80 32h10a10 10 0 0 1-10 10z" fill="none" stroke="#fbbf24" stroke-width="3" />
+                        <rect x="60" y="58" width="10" height="14" fill="#fbbf24" />
+                        <rect x="52" y="70" width="26" height="8" rx="1" fill="#fbbf24" />
+                    </svg>
+                </div>
+
+                @foreach (var challenge in Model)
+                {
+                    var progressPercent = challenge.Target > 0 ? Math.Min(100, (int)Math.Round(challenge.Progress * 100.0 / challenge.Target)) : 0;
+                    var iconClass = ChallengeIconClass(challenge.Type);
+
+                    <div class="card challenge-card challenge-card--@iconClass @(challenge.IsCompleted ? "challenge-card--done" : "")">
+                        <div class="challenge-icon challenge-icon--@iconClass">
+                            @if (iconClass == "amber")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2a5.5 5.5 0 0 0-3 10.1V16a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-3.9A5.5 5.5 0 0 0 9.5 2z" /><path d="M8 22h3" /></svg>
+                            }
+                            else if (iconClass == "sky")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                            }
+                            else
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4.5 16.5-2-2 7-7 2 2z" /><path d="M14.5 6.5 18 3l3 3-3.5 3.5" /><path d="M9.5 11.5 13 8l3 3-3.5 3.5z" /><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" /></svg>
+                            }
+                        </div>
+
+                        <div class="challenge-body">
+                            <div class="challenge-top">
+                                <div class="challenge-title">
+                                    @challenge.Title
+                                    <span class="challenge-difficulty challenge-difficulty--@iconClass">@DifficultyLabel(challenge.Type)</span>
+                                </div>
+                                <div class="challenge-desc">@challenge.Description</div>
+                            </div>
+
+                            <div class="challenge-progress-row">
+                                <div class="challenge-progress-track">
+                                    <div class="challenge-progress-fill challenge-progress-fill--@iconClass" style="width:@progressPercent%;"></div>
+                                </div>
+                                <div class="challenge-progress-label">@challenge.Progress/@challenge.Target</div>
+                                <div class="challenge-status @(challenge.IsCompleted ? "done" : "")">
+                                    @if (challenge.IsCompleted)
+                                    {
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" /></svg>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="challenge-footer">
+                                <span class="challenge-xp">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 20 3 20 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.5 1.75 3.5C4 13 8 10 17 8z" /></svg>
+                                    +@challenge.XpReward XP
+                                </span>
+                                <span class="challenge-period">Resets @(challenge.Period == "Daily" ? "daily" : "weekly, on Monday")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="card challenges-more">
+                    <div class="challenges-more-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg>
+                    </div>
+                    <div>
+                        <div class="challenges-more-title">More challenges coming soon!</div>
+                        <div class="challenges-more-text">New missions will be available every week.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="dashboard-secondary">
+                @await Component.InvokeAsync("StreakCard")
+
+                <div class="card">
+                    <div class="challenges-side-title">Challenge Rewards</div>
+                    <div class="challenges-side-text">Complete challenges to earn XP and level up!</div>
+                    <svg class="challenges-side-illustration" viewBox="0 0 120 80" fill="none">
+                        <path d="M20 40h80l-6 30H26z" fill="#d97706" />
+                        <path d="M20 40h80v10H20z" fill="#b45309" />
+                        <rect x="52" y="30" width="16" height="18" rx="2" fill="#fbbf24" />
+                        <circle cx="40" cy="55" r="5" fill="#34d399" />
+                        <circle cx="60" cy="60" r="5" fill="#34d399" />
+                        <circle cx="78" cy="54" r="5" fill="#34d399" />
+                    </svg>
+                </div>
+
+                <div class="card challenges-side-tips">
+                    <div class="challenges-side-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6M12 3a6 6 0 0 0-3 11.2V17h6v-2.8A6 6 0 0 0 12 3z" /></svg>
+                        Tips
+                    </div>
+                    <div class="challenges-side-text">Do a little each day and amazing things will happen!</div>
+                    <partial name="_OwlMascot" />
+                </div>
+
+                <div class="card quote-card">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.8 6.6 4.9 5.3 7 4.4 9.2 5.1 12 7.8c2.8-2.7 5-3.4 7.1-2.5 3.1 1.3 3.9 4.8 2.2 7.6C18.7 16.65 12 21 12 21z" /></svg>
+                    <span>Need a boost? Every minute you practice, you're becoming better.</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

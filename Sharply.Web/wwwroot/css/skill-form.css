@@ -93,23 +93,7 @@
     flex-shrink: 0;
 }
 
-.btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: transparent;
-    border: 1px solid var(--card-border);
-    color: var(--text-secondary);
-    border-radius: var(--radius-sm);
-    padding: 10px 16px;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-    .btn-ghost:hover {
-        color: var(--text-primary);
-        border-color: var(--text-tertiary);
-    }
+/* .btn-ghost vive en Dashboard.css (siempre cargado) para que su transicion sea consistente en toda la app. */
 
 /* ----- Layout grid: form + live preview ----- */
 .skill-form-grid {
@@ -240,7 +224,7 @@
         border-color: transparent;
     }
 
-/* ----- Mastery slider ----- */
+/* ----- Mastery level ----- */
 .mastery-row {
     display: flex;
     align-items: center;
@@ -254,9 +238,55 @@
     font-size: 0.9rem;
 }
 
-input[type="range"].mastery-slider {
-    width: 100%;
-    accent-color: var(--accent-blue);
+.level-options {
+    display: flex;
+    gap: 10px;
+}
+
+.level-pill {
+    flex: 1;
+    text-align: center;
+    padding: 9px 0;
+    border-radius: var(--radius-pill);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--card-border);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    transition: all 0.12s ease;
+}
+
+    .level-pill input {
+        display: none;
+    }
+
+    .level-pill[data-level="0"].selected {
+        background: var(--red-soft);
+        color: var(--red);
+        border-color: transparent;
+    }
+
+    .level-pill[data-level="1"].selected {
+        background: var(--accent-blue);
+        color: #fff;
+        border-color: transparent;
+    }
+
+    .level-pill[data-level="2"].selected {
+        background: var(--green-soft);
+        color: var(--green);
+        border-color: transparent;
+    }
+
+.ring-value.level-text {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-align: center;
+    line-height: 1.15;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 /* ----- Live preview ----- */
@@ -319,7 +349,7 @@ input[type="range"].mastery-slider {
         }
 
     .preview-ring-wrap .ring-value {
-        font-size: 1.15rem;
+        font-size: 0.76rem;
     }
 
 .preview-ring-sub {

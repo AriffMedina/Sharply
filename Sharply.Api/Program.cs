@@ -14,10 +14,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Repositorios (Adapters de salida)
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+builder.Services.AddScoped<IMissionCompletionRepository, MissionCompletionRepository>();
 
 // Servicios de aplicación (núcleo)
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
-builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
+builder.Services.AddScoped<IDecayStrategyResolver, DecayStrategyResolver>();
+builder.Services.AddScoped<IStreakService, StreakService>();
 builder.Services.AddScoped<IMissionService, MissionService>();
 
 // Controllers + Swagger

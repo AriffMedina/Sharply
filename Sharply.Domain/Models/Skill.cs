@@ -9,7 +9,7 @@ namespace Sharply.Domain.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public MasteryLevel MasteryLevel { get; set; } = MasteryLevel.Intermediate;
+        public Level Level { get; set; } = Level.Intermediate;
         public SkillPriority Priority { get; set; } = SkillPriority.Medium;
         public DateTime LastPracticedAt { get; set; } = DateTime.UtcNow;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -17,6 +17,14 @@ namespace Sharply.Domain.Models
 
         public int UserId { get; set; }
         public User User { get; set; } = null!;
+
+        // Fase 3: si viene de un grupo (instanciada desde un GroupSkill), null = skill personal.
+        public int? GroupId { get; set; }
+
+        // Fase 4: sugerencia de práctica generada por IA cuando la skill entra en riesgo.
+        // Se genera una sola vez (email y dashboard leen el mismo valor) y se limpia al practicar.
+        public string? CurrentSuggestion { get; set; }
+        public DateTime? SuggestionGeneratedAt { get; set; }
 
         public ICollection<SkillLog> Logs { get; set; } = new List<SkillLog>();
     }

@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Sharply</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/skill-form.css" asp-append-version="true" />
 </head>
@@ -23,6 +24,7 @@
     </nav>
 
     @RenderBody()
+    <script src="~/js/motion.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

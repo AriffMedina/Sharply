@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Sharply.Application.Services;
 using Sharply.Domain.Interfaces;
+using Sharply.Infrastructure.AI;
 using Sharply.Infrastructure.Data;
 using Sharply.Infrastructure.Jobs;
 using Sharply.Infrastructure.Messaging;
@@ -32,7 +33,24 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISkillLogRepository, SkillLogRepository>();
 builder.Services.AddScoped<ISkillDecayService, SkillDecayService>();
-builder.Services.AddScoped<IDecayStrategy, EbbinghausDecayStrategy>();
+builder.Services.AddScoped<IStreakService, StreakService>();
+builder.Services.AddScoped<IDecayStrategyResolver, DecayStrategyResolver>();
+builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+builder.Services.AddScoped<IMissionCompletionRepository, MissionCompletionRepository>();
+builder.Services.AddScoped<IMissionService, MissionService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupMemberRepository, GroupMemberRepository>();
+builder.Services.AddScoped<IGroupSkillRepository, GroupSkillRepository>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+
+// Fase 4: sugerencias de práctica con IA, Groq primero y Gemini de respaldo.
+builder.Services.AddHttpClient<GroqSuggestionAdapter>(c => c.Timeout = TimeSpan.FromSeconds(10));
+builder.Services.AddHttpClient<GeminiSuggestionAdapter>(c => c.Timeout = TimeSpan.FromSeconds(10));
+builder.Services.AddScoped<IPracticeSuggestionService>(sp => new FailoverSuggestionService(
+    sp.GetRequiredService<GroqSuggestionAdapter>(),
+    sp.GetRequiredService<GeminiSuggestionAdapter>()));
+
 builder.Services.AddHostedService<DecayWorker>();
 
 var app = builder.Build();

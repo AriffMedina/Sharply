@@ -173,6 +173,33 @@ No incluir credenciales reales en `appsettings.json` ni en el repositorio. Usar 
 dotnet user-secrets set "EmailSettings:Password" "tu-password" --project Sharply.Web
 ```
 
+### Sugerencias de práctica con IA (Groq + Gemini)
+
+Cuando una skill entra en riesgo, `DecayWorker` genera una sugerencia de práctica una sola vez
+(vía `IPracticeSuggestionService`) y la reusa tanto en el email de alerta como en el dashboard.
+Groq es el proveedor primario y Gemini el respaldo — si ambos fallan (o falta la API key), la app
+degrada de forma elegante: sigue funcionando igual que hoy, simplemente sin sugerencia.
+
+El modelo de cada proveedor va en `appsettings.json`:
+
+```json
+{
+  "Groq": {
+    "Model": "llama-3.1-8b-instant"
+  },
+  "Gemini": {
+    "Model": "gemini-1.5-flash"
+  }
+}
+```
+
+Las API keys **nunca** van en `appsettings.json`. Configurarlas con User Secrets en desarrollo:
+
+```bash
+dotnet user-secrets set "Groq:ApiKey" "tu-api-key-de-groq" --project Sharply.Web
+dotnet user-secrets set "Gemini:ApiKey" "tu-api-key-de-gemini" --project Sharply.Web
+```
+
 ---
 
 ## Endpoints API

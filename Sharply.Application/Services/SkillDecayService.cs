@@ -9,12 +9,12 @@ namespace Sharply.Application.Services
     public class SkillDecayService : ISkillDecayService
     {
         private readonly ISkillRepository _skillRepository;
-        private readonly IDecayStrategy _decayStrategy;
+        private readonly IDecayStrategyResolver _decayStrategyResolver;
 
-        public SkillDecayService(ISkillRepository skillRepository, IDecayStrategy decayStrategy)
+        public SkillDecayService(ISkillRepository skillRepository, IDecayStrategyResolver decayStrategyResolver)
         {
             _skillRepository = skillRepository;
-            _decayStrategy = decayStrategy;
+            _decayStrategyResolver = decayStrategyResolver;
         }
 
         public Task<int> GetDaysInactiveAsync(Skill skill)
@@ -26,7 +26,8 @@ namespace Sharply.Application.Services
         public async Task<double> CalculateRetentionAsync(Skill skill)
         {
             var daysInactive = await GetDaysInactiveAsync(skill);
-            return _decayStrategy.Calculate(skill.InitialRetention, daysInactive, skill.MasteryLevel, skill.Priority);
+            var strategy = _decayStrategyResolver.Resolve(skill.User.DecayStrategy);
+            return strategy.Calculate(skill.InitialRetention, daysInactive, skill.Level, skill.Priority);
         }
 
         public async Task<IEnumerable<Skill>> GetSkillsAtRiskAsync(int userId, double retentionThreshold = 0.5)

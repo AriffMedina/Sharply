@@ -5,10 +5,10 @@
 }
 
 @functions {
-    string MasteryClass(string mastery) => mastery.Trim().ToLowerInvariant() switch
+    string MasteryClass(string level) => level.Trim().ToLowerInvariant() switch
     {
-        "sharp" => "sharp",
-        "rusty" => "rusty",
+        "advanced" => "sharp",
+        "beginner" => "rusty",
         _ => "intermediate"
     };
     string PriorityClass(string priority) => priority.Trim().ToLowerInvariant() switch
@@ -17,62 +17,15 @@
         "low" => "low",
         _ => "medium"
     };
-    string Initials(string name)
-    {
-        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return parts.Length >= 2 ? $"{parts[0][0]}{parts[1][0]}" : name.Substring(0, Math.Min(2, name.Length));
-    }
 }
 
 <head><link href="~/css/skill-index.css" rel="stylesheet" /></head>
 
 <div class="app-shell">
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
-            Sharply
-        </div>
-        <ul class="sidebar-nav">
-            <li>
-                <a asp-controller="Home" asp-action="Index">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Skills" asp-action="Index" class="active">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
-                    Skills
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z" /><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3" /></svg>
-                    Challenges
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4" /><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2" /></svg>
-                    Community
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 18.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 14a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.93 3.6V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-                    Settings
-                </a>
-            </li>
-        </ul>
-    </aside>
+    @await Component.InvokeAsync("AppSidebar", new { active = "Skills" })
 
     <main class="main">
-        <div class="topbar">
-            <div class="search-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.35-4.35" /></svg>
-                <span>Search your skills...</span>
-            </div>
-        </div>
+        @await Component.InvokeAsync("AppTopbar")
 
         <div class="section-header">
             <div>
@@ -115,15 +68,18 @@
         }
         else
         {
-            <div class="skills-list">
+            <div class="skills-list" id="skillsList">
+                <div class="card skills-empty" id="skillsSearchEmpty" style="display:none;">
+                    <p>No skills match your search.</p>
+                </div>
                 @foreach (var skill in Model)
                 {
-                    var mc = MasteryClass(skill.MasteryLevel);
+                    var mc = MasteryClass(skill.Level);
                     var pc = PriorityClass(skill.Priority);
                     var circumference = 2 * Math.PI * 26;
                     var offset = circumference * (1 - skill.RetentionPercent / 100.0);
 
-                    <div class="card skill-list-row">
+                    <div class="card skill-list-row" data-skill-name="@skill.Name.ToLowerInvariant()">
                         <div class="ring-wrap" style="width:52px;height:52px;flex-shrink:0;">
                             <svg viewBox="0 0 60 60" style="width:52px;height:52px;">
                                 <circle class="ring-track" cx="30" cy="30" r="26" />
@@ -138,7 +94,7 @@
                             <div class="skill-name">@skill.Name</div>
                             <div class="skill-list-meta">
                                 <span class="badge @pc">@skill.Priority Priority</span>
-                                <span class="meta-item mastery-label @mc">@skill.MasteryLevel</span>
+                                <span class="meta-item mastery-label @mc">@skill.Level</span>
                                 <span class="meta-item">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
                                     @skill.DaysAgo days ago
@@ -166,3 +122,29 @@
         }
     </main>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var searchInput = document.getElementById('skillSearchInput');
+            var list = document.getElementById('skillsList');
+            if (!searchInput || !list) return;
+
+            var rows = Array.prototype.slice.call(list.querySelectorAll('.skill-list-row'));
+            var emptyState = document.getElementById('skillsSearchEmpty');
+
+            searchInput.addEventListener('input', function () {
+                var query = searchInput.value.trim().toLowerCase();
+                var visibleCount = 0;
+
+                rows.forEach(function (row) {
+                    var matches = row.dataset.skillName.indexOf(query) !== -1;
+                    row.style.display = matches ? '' : 'none';
+                    if (matches) visibleCount++;
+                });
+
+                emptyState.style.display = visibleCount === 0 ? '' : 'none';
+            });
+        })();
+    </script>
+}

@@ -71,11 +71,22 @@
 
             <div class="field-group">
                 <div class="mastery-row">
-                    <label class="field-label" style="margin-bottom:0;" asp-for="InitialMasteryPercent">Initial Mastery</label>
-                    <span class="mastery-value" id="masteryValueLabel">10%</span>
+                    <label class="field-label" style="margin-bottom:0;">Current Level</label>
+                    <span class="mastery-value" id="levelValueLabel">Intermediate</span>
                 </div>
-                <input class="mastery-slider" type="range" min="0" max="100" asp-for="InitialMasteryPercent" id="masterySlider" />
-                <div class="field-hint">Set where you are today. We'll help you reach 100%.</div>
+                <!-- Este control representa el NIVEL elegido para la skill, no la retención actual (esa se ve en el dashboard y decae con el tiempo). Son métricas distintas a propósito. -->
+                <div class="level-options" id="levelOptions">
+                    <label class="level-pill" data-level="0">
+                        <input type="radio" name="Level" value="0" @(((int)Model.Level) == 0 ? "checked" : "") />Beginner
+                    </label>
+                    <label class="level-pill" data-level="1">
+                        <input type="radio" name="Level" value="1" @(((int)Model.Level) == 1 ? "checked" : "") />Intermediate
+                    </label>
+                    <label class="level-pill" data-level="2">
+                        <input type="radio" name="Level" value="2" @(((int)Model.Level) == 2 ? "checked" : "") />Advanced
+                    </label>
+                </div>
+                <div class="field-hint">Choose where you're starting from. This shapes how fast it fades without practice.</div>
             </div>
         </form>
 
@@ -95,11 +106,11 @@
                         <svg viewBox="0 0 60 60">
                             <circle class="ring-track" cx="30" cy="30" r="26" />
                             <circle class="ring-progress intermediate" id="previewRing" cx="30" cy="30" r="26"
-                                    stroke-dasharray="163.36" stroke-dashoffset="147.02" />
+                                    stroke-dasharray="163.36" stroke-dashoffset="55.54" />
                         </svg>
-                        <div class="ring-value intermediate" id="previewRingValue">10%</div>
+                        <div class="ring-value intermediate level-text" id="previewRingValue">Intermediate</div>
                     </div>
-                    <div class="preview-ring-sub">MASTERY</div>
+                    <div class="preview-ring-sub">LEVEL</div>
                 </div>
 
                 <div class="preview-name" id="previewName">New Skill</div>
@@ -127,35 +138,34 @@
     <script>
         (function () {
         var nameInput = document.getElementById('skillName');
-        var slider = document.getElementById('masterySlider');
-        var masteryLabel = document.getElementById('masteryValueLabel');
+        var levelLabel = document.getElementById('levelValueLabel');
         var previewName = document.getElementById('previewName');
         var previewRing = document.getElementById('previewRing');
         var previewRingValue = document.getElementById('previewRingValue');
         var previewBadge = document.getElementById('previewPriorityBadge');
         var priorityPills = document.querySelectorAll('.priority-pill');
+        var levelPills = document.querySelectorAll('.level-pill');
         var circumference = 2 * Math.PI * 26;
 
-        function masteryClass(percent) {
-        if (percent < 40) return 'rusty';
-        if (percent < 75) return 'intermediate';
-        return 'sharp';
-        }
+        var levels = [
+        { name: 'Beginner', fill: 0.33, cls: 'rusty' },
+        { name: 'Intermediate', fill: 0.66, cls: 'intermediate' },
+        { name: 'Advanced', fill: 1.0, cls: 'sharp' }
+        ];
 
-        function updateRing() {
-        var percent = parseInt(slider.value, 10) || 0;
-        var offset = circumference * (1 - percent / 100);
-        var cls = masteryClass(percent);
+        function updateRing(index) {
+        var level = levels[index];
+        var offset = circumference * (1 - level.fill);
 
-        masteryLabel.textContent = percent + '%';
-        previewRingValue.textContent = percent + '%';
+        levelLabel.textContent = level.name;
+        previewRingValue.textContent = level.name;
         previewRing.setAttribute('stroke-dasharray', circumference.toFixed(2));
         previewRing.setAttribute('stroke-dashoffset', offset.toFixed(2));
 
         previewRing.classList.remove('rusty', 'intermediate', 'sharp');
-        previewRing.classList.add(cls);
+        previewRing.classList.add(level.cls);
         previewRingValue.classList.remove('rusty', 'intermediate', 'sharp');
-        previewRingValue.classList.add(cls);
+        previewRingValue.classList.add(level.cls);
         }
 
         function updateName() {
@@ -171,6 +181,12 @@
         previewBadge.classList.add(priority);
         }
 
+        function updateLevelPills(index) {
+        levelPills.forEach(function (pill) {
+        pill.classList.toggle('selected', parseInt(pill.dataset.level, 10) === index);
+        });
+        }
+
         priorityPills.forEach(function (pill) {
         pill.addEventListener('click', function () {
         pill.querySelector('input').checked = true;
@@ -178,14 +194,26 @@
         });
         });
 
-        slider.addEventListener('input', updateRing);
+        levelPills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+        pill.querySelector('input').checked = true;
+        var index = parseInt(pill.dataset.level, 10);
+        updateLevelPills(index);
+        updateRing(index);
+        });
+        });
+
         nameInput.addEventListener('input', updateName);
 
         // Defaults on load
         var checkedPill = document.querySelector('.priority-pill input:checked');
         var initialPriority = checkedPill ? checkedPill.value.toLowerCase() : 'medium';
         updatePriority(initialPriority);
-        updateRing();
+
+        var checkedLevelInput = document.querySelector('.level-pill input:checked');
+        var initialLevelIndex = checkedLevelInput ? parseInt(checkedLevelInput.value, 10) : 1;
+        updateLevelPills(initialLevelIndex);
+        updateRing(initialLevelIndex);
         updateName();
         })();
     </script>

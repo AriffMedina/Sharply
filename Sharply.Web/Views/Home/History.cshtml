@@ -1,0 +1,76 @@
+@model List<Sharply.Web.ViewModels.HistoryEntryViewModel>
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "History";
+}
+
+<head><link href="~/css/history.css" rel="stylesheet" /></head>
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+            Sharply
+        </div>
+        <ul class="sidebar-nav">
+            <li>
+                <a asp-controller="Home" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Skills" asp-action="Index">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+                    Skills
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="section-header">
+            <div>
+                <div class="section-title-row">
+                    <span class="section-title">Practice History</span>
+                    <span class="section-badge">@Model.Count Sessions</span>
+                </div>
+                <div class="section-subtitle">Every practice session you've logged, most recent first.</div>
+            </div>
+            <div class="section-actions">
+                <a class="btn-ghost" asp-controller="Home" asp-action="Index">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        @if (Model.Count == 0)
+        {
+            <div class="card skills-empty">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                <p>You haven't logged any practice sessions yet.</p>
+                <a class="btn-primary" asp-controller="Home" asp-action="Index">Go practice a skill</a>
+            </div>
+        }
+        else
+        {
+            <div class="history-list">
+                @foreach (var entry in Model)
+                {
+                    <div class="card history-row">
+                        <div class="history-date">
+                            <div class="history-date-day">@entry.PracticedAt.ToString("dd")</div>
+                            <div class="history-date-month">@entry.PracticedAt.ToString("MMM")</div>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-skill">@entry.SkillName</div>
+                            <div class="history-note">@(string.IsNullOrWhiteSpace(entry.Notes) ? "No notes for this session." : entry.Notes)</div>
+                        </div>
+                        <div class="history-time">@entry.PracticedAt.ToString("HH:mm")</div>
+                    </div>
+                }
+            </div>
+        }
+    </main>
+</div>

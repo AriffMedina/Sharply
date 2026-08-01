@@ -14,22 +14,26 @@ namespace Sharply.Web.Controllers
         private readonly ISkillRepository _skillRepository;
         private readonly ISkillLogRepository _skillLogRepository;
         private readonly ISkillDecayService _skillDecayService;
+        private readonly IMissionService _missionService;
 
         public SkillsController(
             ISkillRepository skillRepository,
             ISkillLogRepository skillLogRepository,
-            ISkillDecayService skillDecayService)
+            ISkillDecayService skillDecayService,
+            IMissionService missionService)
         {
             _skillRepository = skillRepository;
             _skillLogRepository = skillLogRepository;
             _skillDecayService = skillDecayService;
+            _missionService = missionService;
         }
 
         // ── LIST ──────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var skills = await _skillRepository.GetByUserIdAsync(CurrentUserId);
+            var skills = (await _skillRepository.GetByUserIdAsync(CurrentUserId))
+                .Where(s => s.GroupId is null);
             var cards = new List<SkillCardViewModel>();
             foreach (var skill in skills)
                 cards.Add(await MapSkillToCardAsync(skill));
@@ -49,8 +53,8 @@ namespace Sharply.Web.Controllers
             {
                 Name = model.Name.Trim(),
                 Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium,
-                MasteryLevel = MapMastery(model.InitialMasteryPercent),
-                InitialRetention = model.InitialMasteryPercent / 100.0,
+                Level = model.Level,
+                InitialRetention = 1.0,
                 LastPracticedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 UserId = CurrentUserId
@@ -58,12 +62,16 @@ namespace Sharply.Web.Controllers
             await _skillRepository.AddAsync(skill);
 
             if (!string.IsNullOrWhiteSpace(model.Description))
+            {
                 await _skillLogRepository.AddAsync(new SkillLog
                 {
                     SkillId = skill.Id,
                     Notes = model.Description!.Trim(),
                     PracticedAt = DateTime.UtcNow
                 });
+
+                await _missionService.EvaluateMissionsAsync(CurrentUserId, skillWasAtRisk: false);
+            }
 
             TempData["SkillAdded"] = skill.Name;
             return RedirectToAction("Index", "Home");
@@ -80,7 +88,7 @@ namespace Sharply.Web.Controllers
             {
                 Name = skill.Name,
                 Priority = skill.Priority.ToString(),
-                InitialMasteryPercent = (int)Math.Round(skill.InitialRetention * 100)
+                Level = skill.Level
             };
             ViewBag.SkillId = id;
             return View(vm);
@@ -96,8 +104,7 @@ namespace Sharply.Web.Controllers
 
             skill.Name = model.Name.Trim();
             skill.Priority = Enum.TryParse<SkillPriority>(model.Priority, out var p) ? p : SkillPriority.Medium;
-            skill.MasteryLevel = MapMastery(model.InitialMasteryPercent);
-            skill.InitialRetention = model.InitialMasteryPercent / 100.0;
+            skill.Level = model.Level;
             await _skillRepository.UpdateAsync(skill);
 
             TempData["SkillUpdated"] = skill.Name;
@@ -123,11 +130,16 @@ namespace Sharply.Web.Controllers
             var skill = await _skillRepository.GetByIdAsync(id);
             if (skill is null || skill.UserId != CurrentUserId) return NotFound();
 
+            var retentionBeforePractice = await _skillDecayService.CalculateRetentionAsync(skill);
+            var wasAtRisk = retentionBeforePractice < skill.User.DecayRetentionThreshold;
+
             skill.LastPracticedAt = DateTime.UtcNow;
             skill.InitialRetention = 1.0;
+            skill.CurrentSuggestion = null;
+            skill.SuggestionGeneratedAt = null;
 
-            if (skill.MasteryLevel < MasteryLevel.Sharp)
-                skill.MasteryLevel++;
+            if (skill.Level < Level.Advanced)
+                skill.Level++;
 
             await _skillRepository.UpdateAsync(skill);
 
@@ -138,19 +150,14 @@ namespace Sharply.Web.Controllers
                 PracticedAt = DateTime.UtcNow
             });
 
+            await _missionService.EvaluateMissionsAsync(CurrentUserId, wasAtRisk);
+
             return RedirectToAction("Index", "Home");
         }
 
         // ── HELPERS ───────────────────────────────────────────
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-
-        private static MasteryLevel MapMastery(int percent) => percent switch
-        {
-            < 40 => MasteryLevel.Rusty,
-            < 75 => MasteryLevel.Intermediate,
-            _ => MasteryLevel.Sharp
-        };
 
         private async Task<SkillCardViewModel> MapSkillToCardAsync(Skill skill)
         {
@@ -164,12 +171,13 @@ namespace Sharply.Web.Controllers
                 Id = skill.Id,
                 Name = skill.Name,
                 Priority = skill.Priority.ToString(),
-                MasteryLevel = skill.MasteryLevel.ToString(),
+                Level = skill.Level.ToString(),
                 RetentionPercent = (int)Math.Round(retention * 100),
                 DaysAgo = daysAgo,
                 Note = string.IsNullOrWhiteSpace(latestNote)
                     ? "No practice notes yet."
-                    : latestNote!
+                    : latestNote!,
+                Suggestion = skill.CurrentSuggestion
             };
         }
     }
