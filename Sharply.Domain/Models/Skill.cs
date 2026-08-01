@@ -21,6 +21,11 @@ namespace Sharply.Domain.Models
         // Fase 3: si viene de un grupo (instanciada desde un GroupSkill), null = skill personal.
         public int? GroupId { get; set; }
 
+        // Fase 4: sugerencia de práctica generada por IA cuando la skill entra en riesgo.
+        // Se genera una sola vez (email y dashboard leen el mismo valor) y se limpia al practicar.
+        public string? CurrentSuggestion { get; set; }
+        public DateTime? SuggestionGeneratedAt { get; set; }
+
         public ICollection<SkillLog> Logs { get; set; } = new List<SkillLog>();
     }
 }
