@@ -30,7 +30,7 @@ namespace Sharply.Infrastructure.Jobs
             {
                 try
                 {
-                    await RunDecayCheckAsync();
+                    await RunDecayCheckAsync(stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -41,13 +41,14 @@ namespace Sharply.Infrastructure.Jobs
             }
         }
 
-        private async Task RunDecayCheckAsync()
+        private async Task RunDecayCheckAsync(CancellationToken ct)
         {
 
             using var scope = _serviceProvider.CreateScope();
 
             var decayService = scope.ServiceProvider.GetRequiredService<ISkillDecayService>();
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+            var suggestionService = scope.ServiceProvider.GetRequiredService<IPracticeSuggestionService>();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             var notifier = new SkillDecayNotifier();
@@ -70,9 +71,23 @@ namespace Sharply.Infrastructure.Jobs
                         "Skill en riesgo: {SkillName} para usuario {UserId}. Notificando...",
                         skill.Name, user.Id);
 
+                    // Fase 4: generar la sugerencia una sola vez por episodio de riesgo — se reusa
+                    // en el email y en el dashboard hasta que se practique y se limpie.
+                    if (string.IsNullOrEmpty(skill.CurrentSuggestion))
+                    {
+                        var suggestion = await suggestionService.GenerateAsync(skill.Name, skill.Level, ct);
+                        if (!string.IsNullOrWhiteSpace(suggestion))
+                        {
+                            skill.CurrentSuggestion = suggestion;
+                            skill.SuggestionGeneratedAt = DateTime.UtcNow;
+                        }
+                    }
+
                     await notifier.NotifyAsync(skill, user);
                 }
             }
+
+            await context.SaveChangesAsync();
         }
     }
 }
