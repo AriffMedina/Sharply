@@ -10,16 +10,16 @@ namespace Sharply.Application.Services
         {
             var difficulty = level switch
             {
-                Level.Beginner => "básico",
-                Level.Advanced => "avanzado",
-                _ => "intermedio"
+                Level.Beginner => "beginner",
+                Level.Advanced => "advanced",
+                _ => "intermediate"
             };
 
             return
-                $"Sos un mentor de práctica técnica. Dá UNA sola sugerencia de práctica breve y concreta " +
-                $"(máximo 2-3 oraciones) para reforzar la habilidad '{skillName}', pensada para un nivel {difficulty}. " +
-                "Redactala como propuesta, no como obligación. No agregues saludos ni explicaciones extra, " +
-                "devolvé solamente el texto de la sugerencia.";
+                $"You are a technical practice mentor. Give ONE short, concrete practice suggestion " +
+                $"(max 2-3 sentences) to reinforce the skill '{skillName}', aimed at a {difficulty} level. " +
+                "Phrase it as a suggestion, not an obligation. Do not add greetings or extra explanations, " +
+                "return only the suggestion text.";
         }
     }
 }

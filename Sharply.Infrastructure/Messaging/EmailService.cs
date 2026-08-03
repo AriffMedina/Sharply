@@ -35,24 +35,24 @@ namespace Sharply.Infrastructure.Messaging
                 senderEmail));
 
             message.To.Add(new MailboxAddress("", toEmail));
-            message.Subject = $"⚠️ Alerta Sharply: Estás olvidando {skillName}";
+            message.Subject = $"⚠️ Sharply Alert: You're forgetting {skillName}";
 
             var levelLabel = level switch
             {
-                Level.Beginner => "Principiante",
-                Level.Advanced => "Avanzado",
-                _ => "Intermedio"
+                Level.Beginner => "Beginner",
+                Level.Advanced => "Advanced",
+                _ => "Intermediate"
             };
 
             var suggestionParagraph = string.IsNullOrWhiteSpace(suggestion)
                 ? string.Empty
-                : $"\n\nSugerencia de práctica: {suggestion}";
+                : $"\n\nPractice suggestion: {suggestion}";
 
             message.Body = new TextPart("plain")
             {
-                Text = $"Hola!\n\nHan pasado {daysInactive} días desde que practicaste '{skillName}' (nivel {levelLabel}).\n" +
-                       $"Tu retención de esta habilidad está cayendo. ¡Entra a Sharply y haz un repaso rápido!" +
-                       $"{suggestionParagraph}\n\nSaludos,\nEl equipo de Sharply"
+                Text = $"Hi!\n\nIt's been {daysInactive} days since you practiced '{skillName}' ({levelLabel} level).\n" +
+                       $"Your retention for this skill is dropping. Log in to Sharply and do a quick review!" +
+                       $"{suggestionParagraph}\n\nCheers,\nThe Sharply team"
             };
 
             using var client = new MailKit.Net.Smtp.SmtpClient();

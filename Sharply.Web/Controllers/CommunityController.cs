@@ -88,7 +88,7 @@ namespace Sharply.Web.Controllers
                 var joined = await _groupService.JoinGroupAsync(CurrentUserId, inviteCode);
                 if (!joined)
                 {
-                    TempData["CommunityError"] = "Ese código no es válido, o ya pertenecés a un grupo.";
+                    TempData["CommunityError"] = "That code is invalid, or you already belong to a group.";
                     TempData["CommunityErrorSource"] = "join";
                 }
             }

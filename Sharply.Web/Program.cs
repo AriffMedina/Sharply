@@ -1,3 +1,4 @@
+using Amazon.Extensions.Configuration.SystemsManager;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Sharply.Application.Services;
@@ -10,6 +11,11 @@ using Sharply.Infrastructure.Repositories;
 using Sharply.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddSystemsManager("/sharply/production");
+}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -43,7 +49,6 @@ builder.Services.AddScoped<IGroupMemberRepository, GroupMemberRepository>();
 builder.Services.AddScoped<IGroupSkillRepository, GroupSkillRepository>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
-
 // Fase 4: sugerencias de práctica con IA, Groq primero y Gemini de respaldo.
 builder.Services.AddHttpClient<GroqSuggestionAdapter>(c => c.Timeout = TimeSpan.FromSeconds(10));
 builder.Services.AddHttpClient<GeminiSuggestionAdapter>(c => c.Timeout = TimeSpan.FromSeconds(10));
@@ -63,7 +68,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();

@@ -191,7 +191,7 @@
                 </div>
 
                 <form method="post" asp-controller="Community" asp-action="Leave"
-                      onsubmit="return confirm('@(Model.IsOwner ? "Salir como dueño borra el grupo entero para todos. ¿Continuar?" : "¿Salir del grupo?")')">
+                      onsubmit="return confirm('@(Model.IsOwner ? "Leaving as owner deletes the whole group for everyone. Continue?" : "Leave the group?")')">
                     @Html.AntiForgeryToken()
                     <button class="btn-ghost" type="submit">@(Model.IsOwner ? "Delete squad" : "Leave squad")</button>
                 </form>
@@ -289,7 +289,7 @@
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
                                         </button>
                                         <form method="post" asp-controller="Community" asp-action="DeleteGroupSkill" class="community-skill-delete-form"
-                                              onsubmit="return confirm('¿Eliminar \'@gs.Name\' del grupo? Se borra de todos los miembros y no se puede deshacer.')">
+                                              onsubmit="return confirm('Delete \'@gs.Name\' from the group? This removes it for all members and cannot be undone.')">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="groupSkillId" value="@gs.Id" />
                                             <button type="submit" class="icon-btn-sm icon-btn-sm--danger" title="Delete skill">

@@ -44,7 +44,7 @@ namespace Sharply.Application.Services
         {
             var existingMembership = await _groupMemberRepository.GetByUserIdAsync(ownerUserId);
             if (existingMembership is not null)
-                throw new InvalidOperationException("Ya pertenecés a un grupo. Salí del actual antes de crear uno nuevo.");
+                throw new InvalidOperationException("You already belong to a group. Leave your current one before creating a new one.");
 
             var group = new Group
             {
